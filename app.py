@@ -5,6 +5,11 @@ app = Flask(__name__)
 def home():
     return render_template('home.html', user="Test Test")
 
+@app.route("/explore")
+def explore():
+    resorts = {"Aspen1", "Aspen2", "Aspen3"}
+    return render_template('explore.html', collection=resorts)
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
