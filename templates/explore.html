@@ -2,8 +2,9 @@
     <link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
 </head>
 <body>
-    {% for item in collection %}
-    <p>{{ item }}</p>
+    {% for item, desc in collection %}
+    <h1>{{ item }}</h1>
+    <p>{{ desc }}</p>
     {% endfor %}
     <br>
 </body>
