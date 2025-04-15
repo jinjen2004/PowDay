@@ -1,4 +1,9 @@
+@font-face {
+    font-family: Inter;
+    src: url('Inter-VariableFont_opsz,wght.ttf');
+}
 body {
     background-color: darkblue;
     color: white !Important;
+    font-family: Inter;
 }
