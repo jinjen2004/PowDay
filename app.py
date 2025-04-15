@@ -10,6 +10,10 @@ def explore():
     resorts = [["Aspen1", "this is a cool resort"], ["Aspen2", "really hard"], ["Aspen3", "awesome awesome awesome"]]
     return render_template('explore.html', collection=resorts)
 
+@app.route("/search")
+def search():
+    return render_template('search.html')
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
