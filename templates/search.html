@@ -1,23 +1,24 @@
 <head>
     <link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/search.css')}}">
 </head>
 
 <body>
     <form>
         <p>Price</p>
         <input type="radio" id="$" name="price" value="$">
-        <label for="$">$</label>
+        <label for="$" class="radio-container">$</label>
         <input type="radio" id="$$" name="price" value="$$">
-        <label for="$$">$$</label>
+        <label for="$$" class="radio-container">$$</label>
         <input type="radio" id="$$$" name="price" value="$$$">
-        <label for="$$$">$$$</label>
+        <label for="$$$" class="radio-container">$$$</label>
 
         <p>Distance from Location</p>
         <input type="radio" id="lowdist" name="dist" value="lowDist">
-        <label for="lowdist">1-25 Miles</label>
+        <label for="lowdist" class="radio-container">1-25 Miles</label>
         <input type="radio" id="meddist" name="dist" value="medDist">
-        <label for="meddist">50-100 Miles</label>
+        <label for="meddist" class="radio-container">50-100 Miles</label>
         <input type="radio" id="fardist" name="dist" value="farDist">
-        <label for="fardist">100-150 Miles</label>
+        <label for="fardist" class="radio-container">100-150 Miles</label>
     </form>
 </body>

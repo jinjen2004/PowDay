@@ -1,0 +1,14 @@
+label {
+    border-radius: 45%;
+    padding: 1% 2% 1% 2%;
+    font-size: small;
+}
+input[type="radio"] {
+    display:none;   
+}
+input[type="radio"]:hover + label{
+    background-color: #FFE1A0;
+}
+input[type="radio"]:checked + label {
+    background-color: #FEAF02;
+}
