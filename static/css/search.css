@@ -1,10 +1,15 @@
+/* p {
+    padding-bottom: 1%;
+} */
 label {
     border-radius: 45%;
     padding: 1% 2% 1% 2%;
     font-size: small;
+    border-style: solid;
+    border-color: #FEAF02;
 }
 input[type="radio"] {
-    display:none;   
+    display:none;
 }
 input[type="radio"]:hover + label{
     background-color: #FFE1A0;
