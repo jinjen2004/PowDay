@@ -4,6 +4,11 @@
 </head>
 
 <body>
+    <ul>
+        <li><a href="{{url_for('home')}}">Home</a></li>
+        <li><a href="{{url_for('explore')}}">Explore</a></li>
+        <li><a class="active" href="{{url_for('search')}}">Search</a></li>
+    </ul>
     <form>
         <p>Price</p>
         <input type="radio" id="$" name="price" value="$">
