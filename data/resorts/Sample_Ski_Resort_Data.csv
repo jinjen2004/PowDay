@@ -1,0 +1,16 @@
+resort_name,state,latitude,longitude,lift_ticket_price_weekday_usd,lift_ticket_price_weekend_usd,difficulty_beginner_pct,difficulty_intermediate_pct,difficulty_advanced_pct,busiest_days,annual_snowfall_inches,skiable_acres,vertical_drop_ft
+Vail,CO,39.6403,-106.3742,165,225,18,29,53,"Sat–Sun, Dec 26–Jan 2, Presidents’ Day",354,5289,3450
+Breckenridge,CO,39.4817,-106.0384,160,220,15,28,57,"Sat–Sun, MLK weekend",353,2908,3398
+Park City Mountain,UT,40.6509,-111.5097,155,215,8,42,50,"Sat–Sun, Sundance Film Festival",355,7300,3200
+Snowbird,UT,40.5802,-111.6543,140,190,7,38,55,"Sat–Sun, Powder mornings",500,2500,3240
+Jackson Hole,WY,43.5875,-110.8277,170,230,10,40,50,"Sat–Sun, Christmas week",458,2500,4139
+Big Sky,MT,45.284,-111.401,165,225,15,25,60,"Sat–Sun, Presidents’ week",400,5850,4350
+Mammoth Mountain,CA,37.6308,-119.0323,150,210,25,40,35,"Sat–Sun, Spring weekends",400,3500,3100
+Heavenly,CA/NV,38.9351,-119.94,150,205,20,45,35,"Sat–Sun, New Year’s week",360,4800,3500
+Palisades Tahoe,CA,39.1974,-120.2353,165,225,25,45,30,"Sat–Sun, Powder alerts",400,6000,2850
+Whistler Blackcomb,BC,50.115,-122.948,170,235,15,55,30,"Sat–Sun, New Year’s week",418,8171,5280
+Mount Snow,VT,42.9603,-72.9084,110,150,15,73,12,"Sat–Sun, MLK weekend",156,600,1700
+Killington,VT,43.6261,-72.7954,130,180,16,46,38,"Sat–Sun, Thanksgiving weekend",250,1509,3050
+Stowe,VT,44.5365,-72.7595,145,200,16,55,29,"Sat–Sun, Presidents’ week",314,485,2360
+Sugarloaf,ME,45.0314,-70.3132,120,165,23,34,43,"Sat–Sun, February vacation",200,1215,2820
+Aspen Snowmass,CO,39.212,-106.949,175,240,6,47,47,"Sat–Sun, X Games week",300,3628,4406

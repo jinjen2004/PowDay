@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/resort.css')}}">
+</head>
+<body>
+    <ul>
+        <li><a  href="{{url_for('home')}}">Home</a></li>
+        <li><a class="active" href="{{url_for('explore')}}">Explore</a></li>
+        <li><a href="{{url_for('search')}}">Search</a></li>
+    </ul>
+    <div class="resort-details">
+        <h1>{{ resort.resort_name }}</h1>
+        <img src="{{url_for('static', filename='img/' + resort.resort_name.lower().replace(' ', '_') + '.jpeg')}}">
+        
+        <div class="stats">
+            <p><strong>Location:</strong> {{ resort.state }} ({{ resort.latitude }}, {{ resort.longitude }})</p>
+            <p><strong>Lift Tickets:</strong> ${{ resort.lift_ticket_price_weekday_usd }} weekday / ${{ resort.lift_ticket_price_weekend_usd }} weekend</p>
+            <p><strong>Difficulty:</strong> {{ resort.difficulty_beginner_pct }}% Beginner, {{ resort.difficulty_intermediate_pct }}% Intermediate, {{ resort.difficulty_advanced_pct }}% Advanced</p>
+            <p><strong>Annual Snowfall:</strong> {{ resort.annual_snowfall_inches }}"</p>
+            <p><strong>Skiable Area:</strong> {{ resort.skiable_acres }} acres</p>
+            <p><strong>Vertical Drop:</strong> {{ resort.vertical_drop_ft }} feet</p>
+            <p><strong>Busiest Days:</strong> {{ resort.busiest_days }}</p>
+        </div>
+
+        <!-- <a href="{{ url_for('explore') }}" class="back-button">← Back to Resorts</a> -->
+    </div>
+</body>
+</html>
