@@ -25,10 +25,16 @@
             <p><strong>Busiest Days:</strong> {{ resort.busiest_days }}</p>
         </div>
         <div class="info">
+         <div class="reviews">
             <h1>Reviews: </h1>
             <p>Something something</p>
             <p>what what what</p>
             <p>this is a good resort</p>
+         </div>
+         <div class="map">
+            <h1>Map</h1>
+            <img src="{{url_for('static',filename='img/replace.png')}}">
+         </div>
         </div>
 
         <!-- <a href="{{ url_for('explore') }}" class="back-button">← Back to Resorts</a> -->
