@@ -1,0 +1,16 @@
+.resort-details {
+    display: flex;
+}
+
+.stats {
+    margin-right:3%;
+}
+
+.booking {
+    display: flex;
+    justify-content: center;
+}
+
+button {
+    margin-top: 2%;
+}

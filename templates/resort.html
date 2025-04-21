@@ -11,10 +11,11 @@
         <li><a href="{{url_for('search')}}">Search</a></li>
     </ul>
     <div class="resort-details">
-        <h1>{{ resort.resort_name }}</h1>
-        <img src="{{url_for('static', filename='img/' + resort.resort_name.lower().replace(' ', '_') + '.jpeg')}}">
         
         <div class="stats">
+            <h1>{{ resort.resort_name }}</h1>
+            <img src="{{url_for('static', filename='img/' + resort.resort_name.lower().replace(' ', '_') + '.jpeg')}}">
+            <p><strong>Description:</strong> whatever description</p>
             <p><strong>Location:</strong> {{ resort.state }} ({{ resort.latitude }}, {{ resort.longitude }})</p>
             <p><strong>Lift Tickets:</strong> ${{ resort.lift_ticket_price_weekday_usd }} weekday / ${{ resort.lift_ticket_price_weekend_usd }} weekend</p>
             <p><strong>Difficulty:</strong> {{ resort.difficulty_beginner_pct }}% Beginner, {{ resort.difficulty_intermediate_pct }}% Intermediate, {{ resort.difficulty_advanced_pct }}% Advanced</p>
@@ -23,8 +24,17 @@
             <p><strong>Vertical Drop:</strong> {{ resort.vertical_drop_ft }} feet</p>
             <p><strong>Busiest Days:</strong> {{ resort.busiest_days }}</p>
         </div>
+        <div class="info">
+            <h1>Reviews: </h1>
+            <p>Something something</p>
+            <p>what what what</p>
+            <p>this is a good resort</p>
+        </div>
 
         <!-- <a href="{{ url_for('explore') }}" class="back-button">← Back to Resorts</a> -->
+    </div>
+    <div class="booking">
+        <button class="button">Book this Trip</button>
     </div>
 </body>
 </html>
