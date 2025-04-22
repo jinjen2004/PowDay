@@ -33,7 +33,7 @@
 - **Resort** Dedicated page for each resort. 
   - Name of resort
   - Picture of resort
-  - Stats/Descriptions: Currently [Description,LocationCO,Lift Tickets Price,Difficulty,Annual Snowfall,Skiable Area5289 acres,Vertical Drop,Busiest Days (This data may not be entirely accurate as of now)
+  - Stats/Descriptions: Currently [Description,LocationCO,Lift Tickets Price,Difficulty,Annual Snowfall,Skiable Area,Vertical Drop,Busiest Days (This data may not be entirely accurate as of now)
   - A Weather report
   - A Map of the resort which can be selected to display weather information
   - Reviews (empty currently)
