@@ -36,3 +36,15 @@ input[type="submit"] {
 .req {
     color: red !important;
 }
+
+input [type="text"] {
+    border-style: solid;
+    border-color: #FEAF02;
+    border-radius: 4px;
+}
+
+.not-button {
+    border: none;
+    font-size: medium;
+    padding-left: 0;
+}

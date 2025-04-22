@@ -10,6 +10,7 @@
         <li><a class="active" href="{{url_for('search')}}">Search</a></li>
     </ul>
     <form>
+        <!-- replace with more specific location thing? -->
         <p>Price</p> <br>
         <input type="radio" id="$" name="price" value="$">
         <label for="$" class="radio-container">$</label>
@@ -17,7 +18,9 @@
         <label for="$$" class="radio-container">$$</label>
         <input type="radio" id="$$$" name="price" value="$$$">
         <label for="$$$" class="radio-container">$$$</label>
-        <br> <br>
+        <br> <br><br><br>
+        <label for="location" class="not-button">Location:</label>
+        <input type="text" id="location" name="location"><br><br>
         <p>Distance from Location <strong class="req">*</strong></p><br>
         <input type="radio" id="lowdist" name="dist" value="lowDist" required>
         <label for="lowdist" class="radio-container">1-25 Miles</label>
