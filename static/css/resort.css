@@ -1,20 +1,109 @@
-.resort-details {
-    display: flex;
+/* general layout ---------------------------------------------------------*/
+.resort-details{
+    display:flex;
+    flex-wrap:wrap;
+    gap:2rem;
+    padding:1rem 2rem;
+}
+.stats{ flex:1 1 300px; max-width:435px; }
+.info { flex:1 1 300px; max-width: 435px;}
+.maps{flex:1 1 260px; max-width:430px; }
+/* cover image -----------------------------------------------------------*/
+.resort-cover-image{
+    width:100%;
+    height:300px;
+    overflow:hidden;
+    border-radius:0.7rem;
+    margin-bottom:1rem;
+}
+.resort-cover-image img{
+    width:100%; height:100%; object-fit:cover;
 }
 
-.stats {
-    margin-right:3%;
+/* stat grid -------------------------------------------------------------*/
+.stat-list{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    row-gap:0.4rem; column-gap:0.5rem;
+}
+.stat-list p{ margin:0; }
+.stat-list span{
+    font-weight:600;
+    white-space:nowrap;
 }
 
-.booking {
-    display: flex;
-    justify-content: center;
+/* live weather box ------------------------------------------------------*/
+.weather-box{
+    background: darkblue;
+    border-radius:0.7rem;
+    padding:1rem 1.2rem;
+    width:100%;
+}
+.wx-temp{ font-size:2rem; font-weight:700; margin:0.2rem 0; }
+.wx-desc{ margin-top:0; text-transform:capitalize; }
+.ski-metrics{ list-style:none; padding-left:0; margin:0; }
+.ski-metrics li{ margin:0.2rem 0; }
+
+/* forecast table --------------------------------------------------------*/
+.forecast-toggle summary{
+    cursor:pointer;
+    padding:0.4rem 0;
+}
+.forecast-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.9rem;
+    margin-top:0.6rem;
+}
+.forecast-table th,
+.forecast-table td{
+    border-bottom:1px solid #e5e5e5;
+    padding:0.3rem 0.4rem;
 }
 
-button {
-    margin-top: 2%;
+/* map -------------------------------------------------------------------*/
+.map{ margin-top:1rem; }
+#resort-map{
+    width:100%px;
+    height:320px;
+    margin-top:0.5rem;
+    border-radius:0.7rem;
 }
 
-.map img {
-    width: 100%;
+/* booking button --------------------------------------------------------*/
+.booking{ text-align:center; margin:2rem 0; }
+.button{
+    padding:0.8rem 1.8rem;
+    font-size:1rem;
+    background:#0d6efd;
+    color:#fff;
+    border:none;
+    border-radius:0.5rem;
+    cursor:pointer;
 }
+/* cross‑hair button */
+.center-btn{
+    font-size:1.4rem;
+    background:#fff;
+    border-radius:4px;
+    box-shadow:0 1px 4px rgba(0,0,0,.3);
+    cursor:pointer;
+    padding:2px 6px;
+    line-height:1;
+}
+.center-btn:hover{ background:#f0f0f0; }
+
+/* 
+How do i make the legend for weather maps smaller? im loosing my mind
+Chat says 
+ .leaflet-control-owm img {
+    max-width: 110px;   
+    height: auto;       
+}
+    It didnt work for me.
+    
+    <div class="leaflet-bottom leaflet-left">
+        <div class="owm-legend-container leaflet-control" style="display: block;">
+            <div class="owm-legend-item" style="float: left; margin-right: 10px;">
+            <img src="https://openweathermap.org/img/a/SN.png" border="0"></div></div></div>
+*/

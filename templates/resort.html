@@ -1,46 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/resort.css')}}">
+    <meta charset="utf-8">
+    <title>{{ resort.resort_name }} — PowDay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Leaflet (no integrity attr → always loads) -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+          
+    <!-- project styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/resort.css') }}">
+
+    
 </head>
 <body>
-    <ul>
-        <li><a  href="{{url_for('home')}}">Home</a></li>
-        <li><a class="active" href="{{url_for('explore')}}">Explore</a></li>
-        <li><a href="{{url_for('search')}}">Search</a></li>
-    </ul>
-    <div class="resort-details">
-        
-        <div class="stats">
-            <h1>{{ resort.resort_name }}</h1>
-            <img src="{{url_for('static', filename='img/' + resort.resort_name.lower().replace(' ', '_') + '.jpeg')}}">
-            <p><strong>Description:</strong> whatever description</p>
-            <p><strong>Location:</strong> {{ resort.state }} ({{ resort.latitude }}, {{ resort.longitude }})</p>
-            <p><strong>Lift Tickets:</strong> ${{ resort.lift_ticket_price_weekday_usd }} weekday / ${{ resort.lift_ticket_price_weekend_usd }} weekend</p>
-            <p><strong>Difficulty:</strong> {{ resort.difficulty_beginner_pct }}% Beginner, {{ resort.difficulty_intermediate_pct }}% Intermediate, {{ resort.difficulty_advanced_pct }}% Advanced</p>
-            <p><strong>Annual Snowfall:</strong> {{ resort.annual_snowfall_inches }}"</p>
-            <p><strong>Skiable Area:</strong> {{ resort.skiable_acres }} acres</p>
-            <p><strong>Vertical Drop:</strong> {{ resort.vertical_drop_ft }} feet</p>
-            <p><strong>Busiest Days:</strong> {{ resort.busiest_days }}</p>
-        </div>
-        <div class="info">
-         <div class="reviews">
-            <h1>Reviews: </h1>
-            <p>Something something</p>
-            <p>what what what</p>
-            <p>this is a good resort</p>
-         </div>
-         <div class="map">
-            <h1>Map</h1>
-            <img src="{{url_for('static',filename='img/replace.png')}}">
-         </div>
-        </div>
 
-        <!-- <a href="{{ url_for('explore') }}" class="back-button">← Back to Resorts</a> -->
-    </div>
-    <div class="booking">
-        <button class="button"><strong>Book This Trip</strong></button>
-    </div>
+    <nav class="top-nav">
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a class="active" href="{{ url_for('explore') }}">Explore</a></li>
+            <li><a href="{{ url_for('search') }}">Search</a></li>
+        </ul>
+    </nav>
+
+    <main class="resort-details">
+
+        <!-- ──────────  LEFT  ──────────-->
+        <section class="stats">
+            <h1>{{ resort.resort_name }}</h1>
+
+            <div class="resort-cover-image">
+                <img src="{{ url_for('static',
+                       filename='img/' + resort.resort_name.lower().replace(' ', '_') + '.jpeg') }}"
+                     alt="{{ resort.resort_name }} cover image">
+            </div>
+
+            <div class="stat-list">
+                <p><span>Description</span>whatever description</p>
+                <p><span>Location</span>{{ resort.state }}
+                   ({{ resort.latitude }}, {{ resort.longitude }})</p>
+                <p><span>Lift Tickets</span>${{ resort.lift_ticket_price_weekday_usd }}
+                   weekday / ${{ resort.lift_ticket_price_weekend_usd }} weekend</p>
+                <p><span>Difficulty</span>{{ resort.difficulty_beginner_pct }} % Beginner ·
+                   {{ resort.difficulty_intermediate_pct }} % Intermediate ·
+                   {{ resort.difficulty_advanced_pct }} % Advanced</p>
+                <p><span>Annual Snowfall</span>{{ resort.annual_snowfall_inches }}"</p>
+                <p><span>Skiable Area</span>{{ resort.skiable_acres }} acres</p>
+                <p><span>Vertical Drop</span>{{ resort.vertical_drop_ft }} ft</p>
+                <p><span>Busiest Days</span>{{ resort.busiest_days }}</p>
+            </div>
+        </section>
+
+        <!-- ──────────  RIGHT  ──────────-->
+        <section class="info">
+
+            <!-- live weather -->
+            <div class="weather-box">
+                <h2>Live Weather</h2>
+                <img src="https://openweathermap.org/img/wn/{{ wx_now.icon }}@2x.png"
+                     alt="{{ wx_now.desc }}">
+                <p class="wx-temp">{{ wx_now.temp }}°F</p>
+                <p class="wx-desc">{{ wx_now.desc }}</p>
+                <p>Feels like {{ wx_now.feels_like }}°F</p>
+                <p>Wind {{ wx_now.wind }} mph
+                   {% if wx_now.gust %}(gust {{ wx_now.gust }} mph){% endif %}</p>
+
+                <hr>
+                <h3>Next 24 h at a glance</h3>
+                <ul class="ski-metrics">
+                    <li>New snow <strong>{{ wx_ski.fresh_24h }} mm</strong></li>
+                    <li>Coldest hour <strong>{{ wx_ski.coldest }}°F</strong></li>
+                    <li>Peak gust <strong>{{ wx_ski.max_gust }} mph</strong></li>
+                </ul>
+
+                {% if wx_daily %}
+                <details class="forecast-toggle">
+                    <summary>5‑Day Outlook</summary>
+                    <table class="forecast-table">
+                        <thead>
+                            <tr><th>Day</th><th>Snow (mm)</th><th>Hi / Lo °F</th><th>Wind mph</th></tr>
+                        </thead>
+                        <tbody>
+                        {% for d in wx_daily %}
+                            <tr>
+                              <td>{{ d.day }}</td>
+                              <td>{{ d.snow }}</td>
+                              <td>{{ d.max }} / {{ d.min }}</td>
+                              <td>{{ d.wind|round }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </details>
+                {% endif %}
+            </div>
+            <!-- reviews (placeholder) -->
+            <div class="reviews">
+                <h2>Reviews</h2>
+                <p>Something something</p>
+                <p>what what what</p>
+                <p>this is a good resort</p>
+            </div>
+        </section>
+        <section class="maps">
+            <!-- map -->
+            <div class="map">
+                <h2>Weather Map</h2>
+                <label for="wx-layer">Weather layer:</label>
+                <!-- layer chooser -->
+                <select id="wx-layer">
+                    <option value="none" selected>Street map only</option>
+                    <option value="snow">Snow (24 h)</option>
+                    <option value="temp">Temperature</option>
+                    <option value="clouds">Clouds</option>
+                    <option value="precip">Precipitation</option>
+                    <option value="wind">Wind</option>
+                </select>
+
+                <!-- lat/lon/apiKey embedded as data‑attributes -->
+                <div id="resort-map"
+                     data-lat="{{ resort.latitude }}"
+                     data-lon="{{ resort.longitude }}"
+                     data-owm="{{ owm_key }}"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="booking">
+        <button class="button">Book This Trip</button>
+    </footer>
+
+    
+    <!-- libraries (no integrity attrs → always load) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+
+    <!-- map logic -->
+    <script src="{{ url_for('static', filename='js/resort-map.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/leaflet-openweathermap.js') }}" defer></script>
 </body>
 </html>
