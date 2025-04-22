@@ -11,48 +11,84 @@
     </ul>
     <form>
         <!-- replace with more specific location thing? -->
+        <p>Pass</p> <br>
+        <input type="radio" id="ikon" name="pass" value="Ikon">
+        <label for="ikon" class="rad-check">Ikon</label>
+        <input type="radio" id="epic" name="pass" value="Epic">
+        <label for="epic" class="rad-check">Epic</label>
+        <br><br><br>
+
         <p>Price</p> <br>
         <input type="radio" id="$" name="price" value="$">
-        <label for="$" class="radio-container">$</label>
+        <label for="$" class="rad-check">$</label>
         <input type="radio" id="$$" name="price" value="$$">
-        <label for="$$" class="radio-container">$$</label>
+        <label for="$$" class="rad-check">$$</label>
         <input type="radio" id="$$$" name="price" value="$$$">
-        <label for="$$$" class="radio-container">$$$</label>
-        <br> <br><br><br>
+        <label for="$$$" class="rad-check">$$$</label>
+        <br><br><br><br>
+
         <label for="location" class="not-button">Location:</label>
-        <input type="text" id="location" name="location"><br><br>
+        <input type="text" id="location" name="location"><br><br><br>
+
         <p>Distance from Location <strong class="req">*</strong></p><br>
         <input type="radio" id="lowdist" name="dist" value="lowDist" required>
-        <label for="lowdist" class="radio-container">1-25 Miles</label>
+        <label for="lowdist" class="rad-check">1-25 Miles</label>
         <input type="radio" id="meddist" name="dist" value="medDist">
-        <label for="meddist" class="radio-container">50-100 Miles</label>
+        <label for="meddist" class="rad-check">50-100 Miles</label>
         <input type="radio" id="fardist" name="dist" value="farDist">
-        <label for="fardist" class="radio-container">100-150 Miles</label>
+        <label for="fardist" class="rad-check">100-150 Miles</label>
+        <br> <br><br>
+
+        <p>Size</p> <br>
+        <input type="radio" id="small" name="size" value="Small">
+        <label for="small" class="rad-check">Small</label>
+        <input type="radio" id="medium" name="size" value="Medium">
+        <label for="medium" class="rad-check">Medium</label>
+        <input type="radio" id="large" name="size" value="Large">
+        <label for="large" class="rad-check">Large</label>
         <br> <br>
+        <br>
+        <p>Vertical Drop</p>
+        <div class="slidecontainer">
+        <input id="drop" class="slider" type="range" min="0" max="5000" step="500">
+        </div>
+        <p><span id="demo"></span></p>
+        <br>
+
         <p>Duration</p><br>
         <input type="radio" id="shortdur" name="duration" value="shortDur">
-        <label for="shortdur" class="radio-container">1-4 Hours</label>
+        <label for="shortdur" class="rad-check">1-4 Hours</label>
         <input type="radio" id="meddur" name="duration" value="medDur">
-        <label for="meddur" class="radio-container">5-10 Hourss</label>
+        <label for="meddur" class="rad-check">5-10 Hours</label>
         <input type="radio" id="largedur" name="duration" value="largeDur">
-        <label for="largedur" class="radio-container">10+ Hours</label>
-        <br> <br>
+        <label for="largedur" class="rad-check">10+ Hours</label>
+        <br> <br><br>
+
         <p>Days of Week - Select Multiple if Needed <strong class="req">*</strong></p><br>
         <input type="checkbox" id="monday" name="days" value="Monday" required>
-        <label for="monday">Monday</label>
+        <label for="monday" class="rad-check">Monday</label>
         <input type="checkbox" id="tuesday" name="days" value="Tuesday">
-        <label for="tuesday">Tuesday</label>
+        <label for="tuesday" class="rad-check">Tuesday</label>
         <input type="checkbox" id="wednesday" name="days" value="Wednesday">
-        <label for="wednesday">Wednesday</label>
+        <label for="wednesday" class="rad-check">Wednesday</label>
         <input type="checkbox" id="thursday" name="days" value="Thursday">
-        <label for="thursday">Thursday</label>
+        <label for="thursday" class="rad-check">Thursday</label>
         <input type="checkbox" id="friday" name="days" value="Friday">
-        <label for="friday">Friday</label>
+        <label for="friday" class="rad-check">Friday</label>
         <input type="checkbox" id="saturday" name="days" value="Saturday">
-        <label for="saturday">Saturday</label>
+        <label for="saturday" class="rad-check">Saturday</label>
         <input type="checkbox" id="sunday" name="days" value="Sunday">
-        <label for="sunday">Sunday</label>
+        <label for="sunday" class="rad-check">Sunday</label>
+        <br><br><br>
+        <p>Allow Snowboarders? </p>
+        <input type="radio" id="yes" name="snowboard" value="Yes">
+        <label for="yes" class="rad-check">Yes</label>
+        <input type="radio" id="no" name="snowboard" value="No">
+        <label for="no" class="rad-check">No</label>
+        <input type="radio" id="maybe" name="snowboard" value="Maybe">
+        <label for="maybe" class="rad-check">Don't Care</label>
         <br><br><br><br>
         <input type="submit" value="Submit" class="button">
     </form>
+    <script src="{{url_for('static',filename='js/search.js')}}"></script>
 </body>
