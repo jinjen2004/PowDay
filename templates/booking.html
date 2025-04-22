@@ -1,0 +1,13 @@
+<html>
+    <head>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/booking.css')}}">
+    </head>
+    <body>
+        <ul>
+            <li><a  href="{{url_for('home')}}">Home</a></li>
+            <li><a class="active" href="{{url_for('explore')}}">Explore</a></li>
+            <li><a href="{{url_for('search')}}">Search</a></li>
+        </ul>
+    </body>
+</html>
