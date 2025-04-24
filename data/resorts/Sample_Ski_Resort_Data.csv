@@ -1,16 +1,84 @@
-resort_name,state,latitude,longitude,lift_ticket_price_weekday_usd,lift_ticket_price_weekend_usd,difficulty_beginner_pct,difficulty_intermediate_pct,difficulty_advanced_pct,busiest_days,annual_snowfall_inches,skiable_acres,vertical_drop_ft
-Vail,CO,39.6403,-106.3742,165,225,18,29,53,"Sat–Sun, Dec 26–Jan 2, Presidents’ Day",354,5289,3450
-Breckenridge,CO,39.4817,-106.0384,160,220,15,28,57,"Sat–Sun, MLK weekend",353,2908,3398
-Park City Mountain,UT,40.6509,-111.5097,155,215,8,42,50,"Sat–Sun, Sundance Film Festival",355,7300,3200
-Snowbird,UT,40.5802,-111.6543,140,190,7,38,55,"Sat–Sun, Powder mornings",500,2500,3240
-Jackson Hole,WY,43.5875,-110.8277,170,230,10,40,50,"Sat–Sun, Christmas week",458,2500,4139
-Big Sky,MT,45.284,-111.401,165,225,15,25,60,"Sat–Sun, Presidents’ week",400,5850,4350
-Mammoth Mountain,CA,37.6308,-119.0323,150,210,25,40,35,"Sat–Sun, Spring weekends",400,3500,3100
-Heavenly,CA/NV,38.9351,-119.94,150,205,20,45,35,"Sat–Sun, New Year’s week",360,4800,3500
-Palisades Tahoe,CA,39.1974,-120.2353,165,225,25,45,30,"Sat–Sun, Powder alerts",400,6000,2850
-Whistler Blackcomb,BC,50.115,-122.948,170,235,15,55,30,"Sat–Sun, New Year’s week",418,8171,5280
-Mount Snow,VT,42.9603,-72.9084,110,150,15,73,12,"Sat–Sun, MLK weekend",156,600,1700
-Killington,VT,43.6261,-72.7954,130,180,16,46,38,"Sat–Sun, Thanksgiving weekend",250,1509,3050
-Stowe,VT,44.5365,-72.7595,145,200,16,55,29,"Sat–Sun, Presidents’ week",314,485,2360
-Sugarloaf,ME,45.0314,-70.3132,120,165,23,34,43,"Sat–Sun, February vacation",200,1215,2820
-Aspen Snowmass,CO,39.212,-106.949,175,240,6,47,47,"Sat–Sun, X Games week",300,3628,4406
+resort_name,state,latitude,longitude,lift_ticket_price_weekday_usd,lift_ticket_price_weekend_usd,difficulty_beginner_pct,difficulty_intermediate_pct,difficulty_advanced_pct,busiest_days,annual_snowfall_inches,skiable_acres,vertical_drop_ft,pass_type,allow_snowboard
+Mammoth Mountain,CA,37.6305,-119.0327,179,209,25,35,40,"Sat–Sun, Dec 25–Jan 1",400,3500,3100,Ikon,Yes
+Palisades Tahoe,CA,39.1961,-120.2353,185,225,20,45,35,"Sat–Sun, Presidents’ Day",450,3600,3000,Ikon,Yes
+Jackson Hole,WY,43.5828,-110.8300,185,225,10,40,50,"Sat–Sun, Dec 26–Jan 2",459,2500,4139,Ikon,Yes
+Big Sky,MT,45.2857,-111.4010,190,240,15,35,50,"Sat–Sun, MLK weekend",400,5800,4350,"Ikon, Mountain Collective",Yes
+Stowe,VT,44.5304,-72.8023,140,180,20,55,25,"Sat–Sun, Christmas week",314,485,2360,Epic,Yes
+Alta,UT,40.5907,-111.6399,125,150,25,40,35,"Sat–Sun, powder days",551,2614,2538,Mountain Collective,No
+Deer Valley,UT,40.6372,-111.4783,200,250,30,50,20,"Sat–Sun, Sundance Festival",300,2026,3000,Ikon,No
+Aspen Snowmass,CO,39.1880,-106.8164,189,229,20,50,30,"Sat–Sun, X Games weekend",300,5547,4406,Ikon,Yes
+Sun Valley,ID,43.6805,-114.3638,170,210,25,45,30,"Sat–Sun, New Year’s week",220,2054,3400,Mountain Collective,Yes
+Mad River Glen,VT,44.2000,-72.9167,75,95,10,30,60,"Sat–Sun, powder days",250,115,2000,None,No
+Telluride,CO,37.9375,-107.8123,175,225,23,36,41,"Sat–Sun, Christmas–New Year",309,2000,3950,Epic,Yes
+Snowbird,UT,40.5830,-111.6538,160,195,27,38,35,"Sat–Sun, powder days",500,2500,3240,Ikon,Yes
+Steamboat,CO,40.4572,-106.8045,165,210,14,42,44,"Sat–Sun, Presidents’ Day",336,2965,3668,Ikon,Yes
+Heavenly,CA,38.9399,-119.9771,155,205,20,45,35,"Sat–Sun, Spring Break",360,4800,3500,Epic,Yes
+Sugarloaf,ME,45.0516,-70.3156,95,130,33,36,31,"Sat–Sun, MLK weekend",200,1240,2820,None,Yes
+Taos,NM,36.5844,-105.4478,135,155,24,25,51,"Sat–Sun, Christmas week",305,1294,3272,Ikon,Yes
+Crystal Mountain,WA,46.9354,-121.4750,105,135,15,35,50,"Sat–Sun, powder days",486,2600,3022,None,Yes
+Killington,VT,43.6776,-72.7796,145,175,28,33,39,"Sat–Sun, Foliage Weekend",250,1509,3050,Ikon,Yes
+Whistler Blackcomb,BC,50.1163,-122.9573,135,165,18,55,27,"Sat–Sun, Christmas–New Year",448,8171,5280,Epic,Yes
+Lake Louise,AB,51.4444,-116.1639,115,140,25,45,30,"Sat–Sun, Ice Magic Festival",180,4200,3250,"Ikon, Mountain Collective",Yes
+Zermatt,Switzerland,46.0207,7.7491,120,180,20,50,30,"Dec 25–Jan 5, Easter",250,13000,7546,None,Yes
+Chamonix,France,45.9237,6.8694,90,140,15,35,50,"Dec–Jan holidays, Feb school break",300,3200,9209,None,Yes
+St. Anton,Austria,47.1300,10.2633,80,130,10,40,50,"Christmas, Easter",275,10500,4658,None,Yes
+Niseko,Japan,42.8583,140.6833,70,100,30,40,30,"Jan–Feb, Sapporo Snow Festival",600,2191,3609,Ikon,Yes
+Rusutsu,Japan,42.7500,140.9833,60,90,35,45,20,"Jan–Mar",550,1700,2493,None,Yes
+Banff Sunshine,Canada,51.0793,-115.7636,95,130,25,50,25,"Dec–Feb",360,3300,3514,"Mountain Collective",Yes
+Revelstoke,Canada,50.9519,-118.1708,105,145,10,30,60,"Jan–Mar",400,3121,5620,None,Yes
+Coronet Peak,New Zealand,-45.0167,168.7500,80,110,40,40,20,"Jul–Aug",150,500,1640,None,Yes
+Treble Cone,New Zealand,-44.6667,169.0000,85,120,10,35,55,"Jul–Sep",200,1000,3280,"Mountain Collective",Yes
+Portillo,Chile,-32.8333,-70.1333,90,130,20,30,50,"Jun–Aug",300,1235,2743,None,Yes
+Cerro Catedral,Argentina,-41.1667,-71.4333,50,80,25,45,30,"Jul–Sep",250,2400,3740,None,Yes
+Yongpyong Resort,South Korea,37.6450,128.6733,60,90,30,50,20,"Jan–Feb, Olympics events",250,1300,2300,None,Yes
+Cortina d'Ampezzo,Italy,46.5414,12.1389,75,110,25,50,25,"Dec–Feb",200,3000,3084,None,Yes
+Grandvalira,Andorra,42.5333,1.7333,55,85,35,45,20,"Christmas, Feb school holidays",200,5500,3281,None,Yes
+Rosa Khutor,Russia,43.6567,40.3036,70,100,20,40,40,"Jan–Mar",240,2500,4921,None,Yes
+Gulmarg,India,34.0500,74.3833,30,50,5,25,70,"Jan–Mar",400,2500,4265,None,Yes
+Hakuba Valley,Japan,36.6983,137.8617,65,95,25,45,30,"Jan–Feb, Golden Week",450,3200,3947,None,Yes
+Val Thorens,France,45.2975,6.5794,85,125,20,50,30,"Dec–Apr",230,2475,7415,None,Yes
+Kitzbühel,Austria,47.4444,12.3919,95,140,15,45,40,"Christmas, Hahnenkamm Race week",200,7100,5285,None,Yes
+Laax,Switzerland,46.8306,9.2744,110,160,25,50,25,"Dec–Mar, Freestyle Competitions",300,13500,8865,None,Yes
+Gudauri,Georgia,42.4775,44.4764,25,40,10,30,60,"Jan–Mar, Russian holidays",200,2000,4462,None,Yes
+Dizin,Iran,36.0244,51.2972,20,35,15,50,35,"Dec–Feb, Nowruz",350,3700,3773,None,No
+Mzaar,Lebanon,33.9486,35.7833,50,75,25,45,30,"Weekends, Eid holidays",150,2000,2461,None,Yes
+Palandöken,Turkey,39.7908,41.2764,40,60,20,45,35,"Dec–Feb",120,1800,3281,None,Yes
+Ski Dubai,United Arab Emirates,25.0500,55.3833,85,110,70,25,5,"Year-round",0,22,197,None,Yes
+Tiffindell,South Africa,-30.6833,28.0000,30,45,40,40,20,"Jun–Aug",60,125,656,None,Yes
+Riksgränsen,Sweden,68.4267,18.1150,55,80,5,25,70,"May–Jun (midnight sun)",275,500,2966,None,Yes
+Oukaimeden,Morocco,31.2000,-7.8667,15,25,10,40,50,"Jan–Feb",100,50,3281,None,Yes
+Afriski,Lesotho,-28.9333,28.8833,45,65,30,50,20,"Jun–Aug",60,250,328,None,Yes
+Shymbulak,Kazakhstan,43.1500,77.1833,30,50,20,50,30,"Dec–Mar",150,1000,3615,None,Yes
+Jasná,Slovakia,48.9500,19.6333,45,70,25,50,25,"Dec–Feb",200,1300,3445,Ikon,Yes
+Vogel,Slovenia,46.2667,13.8333,35,55,30,50,20,"Dec–Mar",150,450,4921,None,Yes
+Ylläs,Finland,67.5667,24.2333,60,85,40,40,20,"Nov–May",160,2100,1772,None,Yes
+Cameroon Ski Resort,Cameroon,4.2167,9.1667,10,15,5,10,85,"Jan–Feb (volcanic ash snow)",5,5,656,None,No
+Ski Himalaya,India,32.2833,77.1667,20,30,0,10,90,"Jan–Mar",300,5000,9843,None,Yes
+Mount Etna Ski,Italy,37.7517,14.9992,40,60,15,40,45,"Dec–Mar (volcano views)",100,150,2625,None,Yes
+Masikryong,North Korea,39.1000,127.4000,5,10,30,50,20,"State holidays",150,500,4436,None,No
+Balea Lac,Romania,45.6000,24.6167,Free,Free,10,30,60,"Dec–Mar (ice road access)",200,15,656,None,Yes
+Troodos Ski,Cyprus,34.9333,32.8667,25,40,50,40,10,"Jan–Feb",60,50,2133,None,Yes
+Pyhä,Finland,67.0167,27.1333,55,75,35,45,20,"Oct–May",190,340,1312,None,Yes
+Whitefish Mountain,MT,48.4808,-114.3541,89,119,25,45,30,"Sat–Sun, Presidents’ Day",300,3050,3453,Indy,Yes
+Schweitzer Mountain,ID,48.3572,-116.6283,85,115,20,50,30,"Dec 26–Jan 1",300,2900,2440,Indy,Yes
+Red Mountain,BC,49.0833,-117.8167,75,105,15,40,45,"Jan–Feb",300,3850,2919,None,Yes
+Sun Peaks,BC,50.8825,-119.9056,95,125,35,45,20,"Christmas week",90,4270,2874,None,Yes
+Jay Peak,VT,44.9361,-72.5072,89,109,20,40,40,"Powder weekends",359,385,2153,Indy,Yes
+Bolton Valley,VT,44.4194,-72.8819,65,85,30,40,30,"Weekends, night skiing",300,165,1692,Indy,Yes
+Bridger Bowl,MT,45.8167,-110.9333,70,90,20,50,30,"Powder days",350,2000,2600,None,No
+Arapahoe Basin,CO,39.6425,-105.8719,119,149,10,30,60,"Spring skiing season",350,1428,2730,Ikon,Yes
+SilverStar,BC,50.3583,-119.0556,80,110,30,50,20,"Festival of Light weekend",275,3282,2500,None,Yes
+Loveland Ski Area,CO,39.6803,-105.8958,99,129,18,40,42,"Oct–Nov (early season)",422,1800,2130,None,Yes
+Monarch Mountain,CO,38.5122,-106.3325,75,95,20,35,45,"Weekends",350,800,1162,None,Yes
+Powder Mountain,UT,41.3819,-111.7797,99,129,25,40,35,"Powder days",500,8464,2500,None,Yes
+Mt. Baker,WA,48.8583,-121.6647,75,95,15,35,50,"Dec–Jan (snow depth contests)",663,1000,1500,None,Yes
+Brighton Resort,UT,40.5997,-111.5825,109,139,21,39,40,"Night skiing crowds",500,1050,1745,Ikon,Yes
+Smugglers' Notch,VT,44.5667,-72.7833,89,119,35,45,20,"Family weeks",300,1000,2610,Indy,Yes
+Castle Mountain,AB,49.3167,-114.4167,65,85,10,40,50,"Weekend warriors",355,3500,2638,None,Yes
+Brundage Mountain,ID,45.0000,-116.1500,79,99,25,45,30,"Dec–Feb",320,3200,1800,None,Yes
+Mt. Bachelor,OR,43.9794,-121.6814,109,139,15,35,50,"Spring weekends",462,4300,3365,Ikon,Yes
+Timberline Lodge,OR,45.3311,-121.7114,89,119,25,50,25,"Summer skiing",550,1415,3597,None,Yes
+Bogus Basin,ID,43.7647,-116.1039,65,85,30,40,30,"Night skiing",250,2600,1800,None,Yes
+Vail,CO,39.6403,-106.3742,165,225,18,29,53,"Sat–Sun, Dec 26–Jan 2, Presidents’ Day",354,5289,3450,Ikon,Yes
+Breckenridge,CO,39.4817,-106.0384,160,220,15,28,57,"Sat–Sun, MLK weekend",353,2908,3398,Epic,Yes
+Park City Mountain,UT,40.6509,-111.5097,155,215,8,42,50,"Sat–Sun, Sundance Film Festival",355,7300,3200,None,Yes

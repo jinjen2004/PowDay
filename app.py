@@ -1,10 +1,24 @@
-from flask import Flask, render_template  #Q0: What happens if you remove render_template from this line?
-app = Flask(__name__)
-
 import pandas as pd
 import os, time, requests, functools, time 
 from typing import Dict, Any, List 
 from weather import current, hourly, daily, ski_summary
+from models import db
+from models.ski_resort import SkiResort
+
+
+
+
+from flask import Flask, render_template, request  #Q0: What happens if you remove render_template from this line?
+
+app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ski_resorts.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+
+with app.app_context(): # Database
+    db.create_all()
 
 # Load resort data once when the app starts
 RESORTS_DF = pd.read_csv('data/resorts/Sample_Ski_Resort_Data.csv')
@@ -23,32 +37,102 @@ def explore():
     return render_template('explore.html', collection=resorts)
     # The images are referenced by the resort name and are in the static/img folder. Works for now but might not be the best system, storing the image path may be better.
 
-@app.route("/search")
+@app.route("/search", methods=["GET"])
 def search():
-    return render_template('search.html')
+    if not request.args:
+        return render_template("search.html")
+
+    q = SkiResort.query
+
+    # Pass type filter
+    pass_type = request.args.get("pass")
+    if pass_type and pass_type != "Any":
+        q = q.filter(SkiResort.pass_type == pass_type)
+
+    # Price filter
+    price = request.args.get("price")
+    if price == "$":
+        q = q.filter(SkiResort.lift_ticket_price_weekend_usd < 150)
+    elif price == "$$":
+        q = q.filter(SkiResort.lift_ticket_price_weekend_usd.between(150, 200))
+    elif price == "$$$":
+        q = q.filter(SkiResort.lift_ticket_price_weekend_usd > 200)
+
+    # Location filter
+    loc = request.args.get("location", "").strip()
+    if loc:
+        q = q.filter(SkiResort.state.ilike(f"%{loc}%"))
+
+    # Distance filter (temporarily disabled until implementation)
+    # dist = request.args.get("dist")
+    # if dist and dist != "Any":
+    #     q = q.filter(SkiResort.distance_mi <= int(dist))
+
+    # Size filter using skiable_acres
+    size = request.args.get("size")
+    if size and size != "Any":
+        if size == "Small":
+            q = q.filter(SkiResort.skiable_acres < 1000)
+        elif size == "Medium":
+            q = q.filter(SkiResort.skiable_acres.between(1000, 5000))
+        elif size == "Large":
+            q = q.filter(SkiResort.skiable_acres > 5000)
+
+    # Vertical drop filter
+    limit = int(request.args.get("drop", 5000))
+    if limit < 5000:
+        q = q.filter(SkiResort.vertical_drop_ft <= limit)
+
+    # Busiest days filter
+    days = request.args.getlist("days")
+    if 'Any' not in days and days:
+        for day in days:
+            q = q.filter(SkiResort.busiest_days.ilike(f"%{day}%"))
+
+    # Snowboarders filter
+    snowboard = request.args.get("snowboard")
+    if snowboard in ("Yes", "No"):
+        q = q.filter(SkiResort.allow_snowboard == (snowboard == "Yes"))
+
+    resorts = q.all()
+    return render_template("search.html", resorts=resorts)
+
 
 @app.route("/resort/<resort_name>")
 def resort(resort_name):
-    clean = resort_name.replace('_', ' ')
-    row = RESORTS_DF[RESORTS_DF['resort_name'] == clean]
-    if row.empty: abort(404)
-    info = row.iloc[0].to_dict()
-
+    print(f"Resort name: {resort_name}")
+    # Query database using SQLAlchemy model
+    row = SkiResort.query.filter_by(resort_name=resort_name).first()
+    
+    if not row:
+        abort(404)
+        
+    # Convert SQLAlchemy model instance to dictionary
+    info = {c.name: getattr(row, c.name) for c in row.__table__.columns}
+    
+    # Get coordinates for weather data
     lat, lon = info["latitude"], info["longitude"]
+    
+    # Fetch weather data (existing implementation)
     c_now   = current(lat, lon)
     h_next  = hourly(lat, lon)
     d_next  = daily(lat, lon)       
     summary = ski_summary(h_next)
-
-    # after assembling wx_now / wx_daily ...
+    
     return render_template(
         "resort.html",
         resort=info,
         wx_now=c_now,
         wx_ski=summary,
-        wx_daily=d_next,             # <-- needed for 5‑day table
-        owm_key=API_KEY  # <-- for tile layer
+        wx_daily=d_next,
+        owm_key=API_KEY
     )
+
+@app.route("/debug-db")
+def debug_db():
+    resorts = SkiResort.query.all()
+    return f"Found {len(resorts)} resorts: {[r.resort_name for r in resorts]}"
+
 
 if __name__ == "__main__":
     app.debug = True
