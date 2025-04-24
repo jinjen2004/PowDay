@@ -6,8 +6,17 @@
     <body>
         <ul>
             <li><a  href="{{url_for('home')}}">Home</a></li>
-            <li><a class="active" href="{{url_for('explore')}}">Explore</a></li>
+            <li><a href="{{url_for('explore')}}">Explore</a></li>
             <li><a href="{{url_for('search')}}">Search</a></li>
         </ul>
+        <form>
+            <label for="startdate">Start Date: </label>
+            <input type="date" id="startdate" name="startdate">
+            <br>
+            <label for="enddate">End Date: </label>
+            <input type="date" id="enddate" name="enddate">
+            <input type="button" onclick="test()">
+        </form>
+        <script src="{{url_for('static',filename='js/booking.js')}}"></script>
     </body>
 </html>
