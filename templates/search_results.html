@@ -1,0 +1,10 @@
+<h2>Search Results</h2>
+{% if resorts %}
+    <ul>
+        {% for r in resorts %}
+            <li>{{ r.resort_name }} — {{ r.state }} — ${{ r.lift_ticket_price_weekend_usd }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found.</p>
+{% endif %}

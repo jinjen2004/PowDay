@@ -1,21 +1,22 @@
 <head>
-    <link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/explore.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
 </head>
 <body>
     <ul>
-        <li><a  href="{{url_for('home')}}">Home</a></li>
-        <li><a class="active" href="{{url_for('explore')}}">Explore</a></li>
-        <li><a href="{{url_for('search')}}">Search</a></li>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a class="active" href="{{ url_for('explore') }}">Explore</a></li>
+        <li><a href="{{ url_for('search') }}">Search</a></li>
     </ul>
+
     <div class="resort-info">
         {% for item, desc in collection %}
-        <img src="{{url_for('static', filename='img/' + item.lower() + '.jpeg')}}"/>
-        <h1>{{ item }}</h1>
-        <p>{{ desc }}</p>
-        <a href="{{ url_for('resort', resort_name=item) }}">
-            <button class="button">Read More</button>
-        </a>
+            <img src="{{ url_for('static', filename='img/' + item.lower().replace(' ', '_') + '.jpeg') }}"/>
+            <h1>{{ item }}</h1>
+            <p>{{ desc }}</p>
+            <a href="{{ url_for('resort', resort_name=item.replace(' ', '_')) }}">
+                <button class="button">Read More</button>
+            </a>
         {% endfor %}
     </div>
     <br>

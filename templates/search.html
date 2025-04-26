@@ -1,94 +1,185 @@
+{% set f = request.args %}  {# handy shorthand #}
+
+<!doctype html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='css/search.css')}}">
+  <meta charset="utf-8"/>
+  <title>Ski Resort Search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+  <style>
+    /* Temporary inline styling for compact layout */
+    fieldset { 
+      display: inline-block;
+      vertical-align: top;
+      margin: 5px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      min-width: 200px;
+    }
+    legend { font-weight: bold; padding: 0 5px; }
+    select { width: 100%; }
+    .compact { margin: 5px 0; }
+  </style>
 </head>
-
 <body>
-    <ul>
-        <li><a href="{{url_for('home')}}">Home</a></li>
-        <li><a href="{{url_for('explore')}}">Explore</a></li>
-        <li><a class="active" href="{{url_for('search')}}">Search</a></li>
-    </ul>
-    <form>
-        <!-- replace with more specific location thing? -->
-        <p>Pass</p> <br>
-        <input type="radio" id="ikon" name="pass" value="Ikon">
-        <label for="ikon" class="rad-check">Ikon</label>
-        <input type="radio" id="epic" name="pass" value="Epic">
-        <label for="epic" class="rad-check">Epic</label>
-        <br><br><br>
+  <ul>
+    <li><a class="active" href="{{url_for('home')}}">Home</a></li>
+    <li><a href="{{url_for('explore')}}">Explore</a></li>
+    <li><a href="{{url_for('search')}}">Search</a></li>
+  </ul>
+  <main> 
+  <!-- ── SEARCH FORM ────────────────────────────────────────────────── -->
+  <form method="get" action="{{ url_for('search') }}">
 
-        <p>Price</p> <br>
-        <input type="radio" id="$" name="price" value="$">
-        <label for="$" class="rad-check">$</label>
-        <input type="radio" id="$$" name="price" value="$$">
-        <label for="$$" class="rad-check">$$</label>
-        <input type="radio" id="$$$" name="price" value="$$$">
-        <label for="$$$" class="rad-check">$$$</label>
-        <br><br><br><br>
+    <!-- Pass --------------------------------------------------------- -->
+    <fieldset>
+      <legend>Pass</legend>
+      <select name="pass" class="compact">
+        <option value="Any">Any</option>
+        <option value="Ikon" {{ 'selected' if f.get('pass')=='Ikon' else '' }}>Ikon</option>
+        <option value="Epic" {{ 'selected' if f.get('pass')=='Epic' else '' }}>Epic</option>
+      </select>
+    </fieldset>
 
-        <label for="location" class="not-button">Location:</label>
-        <input type="text" id="location" name="location"><br><br><br>
+    <!-- Price ------------------------------------------------------- -->
+    <fieldset>
+      <legend>Price</legend>
+      <select name="price" class="compact">
+        <option value="Any">Any</option>
+        <option value="$"   {{ 'selected' if f.get('price')=='$'   else '' }}>$ ( &lt; $150 )</option>
+        <option value="$$"  {{ 'selected' if f.get('price')=='$$'  else '' }}>$$ ($150-200)</option>
+        <option value="$$$" {{ 'selected' if f.get('price')=='$$$' else '' }}>$$$ ( &gt; $200 )</option>
+      </select>
+    </fieldset>
 
-        <p>Distance from Location <strong class="req">*</strong></p><br>
-        <input type="radio" id="lowdist" name="dist" value="lowDist" required>
-        <label for="lowdist" class="rad-check">1-25 Miles</label>
-        <input type="radio" id="meddist" name="dist" value="medDist">
-        <label for="meddist" class="rad-check">50-100 Miles</label>
-        <input type="radio" id="fardist" name="dist" value="farDist">
-        <label for="fardist" class="rad-check">100-150 Miles</label>
-        <br> <br><br>
+    <!-- Location & distance ----------------------------------------- -->
+    <fieldset>
+      <legend>Location</legend>
+      <div class="compact">
+        <input type="text" name="location" value="{{ f.get('location','') }}" 
+               placeholder="State/Region" style="width: 95%">
+      </div>
+      <div class="compact">
+        <select name="dist">
+          <option value="Any">Any Distance</option>
+          <option value="25"  {{ 'selected' if f.get('dist')=='25'  else '' }}>≤ 25 mi</option>
+          <option value="100" {{ 'selected' if f.get('dist')=='100' else '' }}>≤ 100 mi</option>
+          <option value="150" {{ 'selected' if f.get('dist')=='150' else '' }}>≤ 150 mi</option>
+        </select>
+      </div>
+    </fieldset>
 
-        <p>Size</p> <br>
-        <input type="radio" id="small" name="size" value="Small">
-        <label for="small" class="rad-check">Small</label>
-        <input type="radio" id="medium" name="size" value="Medium">
-        <label for="medium" class="rad-check">Medium</label>
-        <input type="radio" id="large" name="size" value="Large">
-        <label for="large" class="rad-check">Large</label>
-        <br> <br>
-        <br>
-        <p>Vertical Drop</p>
-        <div class="slidecontainer">
-        <input id="drop" class="slider" type="range" min="0" max="5000" step="500">
-        </div>
-        <p><span id="demo"></span></p>
-        <br>
+    <!-- Resort size ------------------------------------------------- -->
+    <fieldset>
+      <legend>Resort Size</legend>
+      <select name="size" class="compact">
+        <option value="Any">Any</option>
+        <option value="Small"  {{ 'selected' if f.get('size')=='Small'  else '' }}>Small</option>
+        <option value="Medium" {{ 'selected' if f.get('size')=='Medium' else '' }}>Medium</option>
+        <option value="Large"  {{ 'selected' if f.get('size')=='Large'  else '' }}>Large</option>
+      </select>
+    </fieldset>
 
-        <p>Duration</p><br>
-        <input type="radio" id="shortdur" name="duration" value="shortDur">
-        <label for="shortdur" class="rad-check">1-4 Hours</label>
-        <input type="radio" id="meddur" name="duration" value="medDur">
-        <label for="meddur" class="rad-check">5-10 Hours</label>
-        <input type="radio" id="largedur" name="duration" value="largeDur">
-        <label for="largedur" class="rad-check">10+ Hours</label>
-        <br> <br><br>
+    <!-- Vertical drop ----------------------------------------------- -->
+    <fieldset>
+      <legend>Vertical Drop</legend>
+      <div class="compact">
+        <label>
+          <input type="checkbox" id="drop-any" 
+                 {{ 'checked' if f.get('drop', '5000') == '5000' else '' }}>
+          Any
+        </label>
+      </div>
+      <div class="compact">
+        <input type="range" name="drop" id="drop"
+               min="0" max="5000" step="500"
+               value="{{ f.get('drop', 5000) }}"
+               {{ 'disabled' if f.get('drop', '5000') == '5000' else '' }}>
+        <span id="drop-val">{{ f.get('drop', 5000) }}</span> ft
+      </div>
+    </fieldset>
 
-        <p>Days of Week - Select Multiple if Needed <strong class="req">*</strong></p><br>
-        <input type="checkbox" id="monday" name="days" value="Monday" required>
-        <label for="monday" class="rad-check">Monday</label>
-        <input type="checkbox" id="tuesday" name="days" value="Tuesday">
-        <label for="tuesday" class="rad-check">Tuesday</label>
-        <input type="checkbox" id="wednesday" name="days" value="Wednesday">
-        <label for="wednesday" class="rad-check">Wednesday</label>
-        <input type="checkbox" id="thursday" name="days" value="Thursday">
-        <label for="thursday" class="rad-check">Thursday</label>
-        <input type="checkbox" id="friday" name="days" value="Friday">
-        <label for="friday" class="rad-check">Friday</label>
-        <input type="checkbox" id="saturday" name="days" value="Saturday">
-        <label for="saturday" class="rad-check">Saturday</label>
-        <input type="checkbox" id="sunday" name="days" value="Sunday">
-        <label for="sunday" class="rad-check">Sunday</label>
-        <br><br><br>
-        <p>Allow Snowboarders? </p>
-        <input type="radio" id="yes" name="snowboard" value="Yes">
-        <label for="yes" class="rad-check">Yes</label>
-        <input type="radio" id="no" name="snowboard" value="No">
-        <label for="no" class="rad-check">No</label>
-        <input type="radio" id="maybe" name="snowboard" value="Maybe">
-        <label for="maybe" class="rad-check">Don't Care</label>
-        <br><br><br><br>
-        <input type="submit" value="Submit" class="button">
-    </form>
-    <script src="{{url_for('static',filename='js/search.js')}}"></script>
+    <!-- Busiest days ------------------------------------------------ -->
+    <fieldset>
+      <legend>Busiest Days</legend>
+      <select name="days" multiple size="4" class="compact">
+        <option value="Any" {{ 'selected' if 'Any' in f.getlist('days') else '' }}>Any Day</option>
+        {% for day in ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] %}
+          <option value="{{ day }}" {{ 'selected' if day in f.getlist('days') else '' }}>{{ day }}</option>
+        {% endfor %}
+      </select>
+    </fieldset>
+
+    <!-- Snowboarders ------------------------------------------------ -->
+    <fieldset>
+      <legend>Snowboarders</legend>
+      <select name="snowboard" class="compact">
+        <option value="Any">Any</option>
+        <option value="Yes" {{ 'selected' if f.get('snowboard')=='Yes' else '' }}>Allowed</option>
+        <option value="No" {{ 'selected' if f.get('snowboard')=='No' else '' }}>Not Allowed</option>
+      </select>
+    </fieldset>
+
+    <div style="clear: both; margin-top: 10px;">
+      <button type="submit">Search</button>
+    </div>
+  </form>
+
+  <!-- ── SEARCH RESULTS ─────────────────────────────────────────────── -->
+  {% if resorts is defined %}
+    <h2>Results ({{ resorts|length }})</h2>
+    {% if resorts %}
+      <ul>
+        {% for r in resorts %}
+          <li>{{ r.resort_name }} — {{ r.state }} — ${{ r.lift_ticket_price_weekend_usd }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No resorts matched your criteria.</p>
+    {% endif %}
+  {% endif %}
+  </main>
+
+  <script>
+    // Vertical drop handling
+    const dropAny = document.getElementById('drop-any');
+    const dropSlider = document.getElementById('drop');
+    const dropVal = document.getElementById('drop-val');
+
+    if (dropAny && dropSlider) {
+      dropAny.addEventListener('change', () => {
+        if (dropAny.checked) {
+          dropSlider.value = 5000;
+          dropSlider.disabled = true;
+          dropVal.textContent = 5000;
+        } else {
+          dropSlider.disabled = false;
+        }
+      });
+
+      dropSlider.addEventListener('input', () => {
+        dropVal.textContent = dropSlider.value;
+        if (dropSlider.value != 5000) dropAny.checked = false;
+      });
+    }
+
+    // Busiest days handling
+    const daysSelect = document.querySelector('select[name="days"]');
+    if (daysSelect) {
+      daysSelect.addEventListener('change', () => {
+        const options = Array.from(daysSelect.selectedOptions);
+        const hasAny = options.some(opt => opt.value === 'Any');
+        
+        if (hasAny) {
+          Array.from(daysSelect.options).forEach(opt => {
+            if (opt.value !== 'Any') opt.selected = false;
+          });
+        } else {
+          daysSelect.querySelector('option[value="Any"]').selected = false;
+        }
+      });
+    }
+  </script>
 </body>
+</html>
