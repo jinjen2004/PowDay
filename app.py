@@ -1,12 +1,19 @@
 import pandas as pd
-import os, time, requests, functools, time 
+import os, time, requests, functools, time
 from typing import Dict, Any, List 
+<<<<<<< HEAD
 from models import db
 from models.ski_resort import SkiResort
 from utils.geo import geocode, haversine_mi
-from utils.weather import current, hourly, daily, ski_summary
+from utils.weather import current, hourly, daily, ski_summary, multi_day_summary
 from geopy.exc import GeocoderServiceError # for error on distance search
 
+=======
+from weather import current, hourly, daily, ski_summary, multi_day_summary
+from models import db
+from models.ski_resort import SkiResort
+from datetime import date, datetime
+>>>>>>> 7ad5133713a6af0dc9deefdde566f50a95ee4833
 
 from flask import Flask, render_template, request #Q0: What happens if you remove render_template from this line?
 
@@ -30,20 +37,27 @@ def home():
 
 @app.route("/explore")
 def explore():
-    resorts = [
-        ["Vail", "this is a cool resort"],
-        ["Breckenridge", "really hard"],
-        ["Park City Mountain", "awesome awesome awesome"]
-    ]
+    resorts = [["Vail", "this is a cool resort"], ["Breckenridge", "really hard"], ["ParkCity", "awesome awesome awesome"]]
     return render_template('explore.html', collection=resorts)
-
     # The images are referenced by the resort name and are in the static/img folder. Works for now but might not be the best system, storing the image path may be better.
 
 @app.route("/search", methods=["GET"])
 def search():
+    today = date.today().isoformat()
+
+    # Get user-selected dates, or fall back to today / 2 days later
+    startDate = request.args.get('startDate') or today
+    endDate = request.args.get('endDate') or today
+
+    try:
+        startDateFormat = datetime.strptime(startDate, "%Y-%m-%d").date()
+        endDateFormat = datetime.strptime(endDate, "%Y-%m-%d").date()
+    except ValueError:
+        startDateFormat = endDateFormat = date.today()
+
     if not request.args:
         return render_template("search.html")
-
+    
     q = SkiResort.query
 
     # Pass type filter
@@ -116,15 +130,54 @@ def search():
 
 
     #resorts = q.all()
-    return render_template("search.html", resorts=resorts)
 
+    resortsWithScores = []
+
+    for resort in resorts:
+        lat, lon = resort.latitude, resort.longitude
+        try:
+            summary = multi_day_summary(lat, lon, startDateFormat, endDateFormat)
+            if summary is None:
+                continue  # skip this resort if weather lookup failed
+
+            resort_score = score(summary)
+
+            resortsWithScores.append({
+                "resort": resort,
+                "score": resort_score,
+                "summary": summary
+            })
+
+        except Exception as e:
+            print(f"Error fetching weather for {resort.resort_name}: {e}")
+    
+    resortsWithScores.sort(key=lambda r: r["score"], reverse=True)
+
+    return render_template("search.html", resorts=resortsWithScores, startDate = startDate, endDate = endDate, today=today)
+
+def score(summary: dict) -> float:
+
+    """
+    Returns a score for the resort based on the weather summary.
+    Fresh snowfall --> weight of 60
+    Temperature (close to 32F) --> weight of 25
+    Wind (low) --> weight of 15
+    """
+
+    totalSnow = summary["totalSnow"]
+    avgTemp = summary["avgTemp"]
+    avgWind = summary["avgWind"]
+
+    snowScore = min(totalSnow, 18)/18 * 60
+    tempScore = (32 - abs(avgTemp - 32)) / 32 * 25 
+    windScore = (10 - avgWind) / 10 * 15
+    return snowScore + tempScore + windScore
 
 @app.route("/resort/<resort_name>")
 def resort(resort_name):
+    print(f"Resort name: {resort_name}")
     # Query database using SQLAlchemy model
-    readable_name = resort_name.replace("_", " ")
-
-    row = SkiResort.query.filter_by(resort_name=readable_name).first()
+    row = SkiResort.query.filter_by(resort_name=resort_name).first()
     
     if not row:
         abort(404)
