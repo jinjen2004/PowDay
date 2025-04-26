@@ -49,6 +49,9 @@ def resort(resort_name):
         wx_daily=d_next,             # <-- needed for 5‑day table
         owm_key=API_KEY  # <-- for tile layer
     )
+@app.route("/booking") 
+def booking():
+    return render_template('booking.html')
 
 if __name__ == "__main__":
     app.debug = True
