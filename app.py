@@ -1,19 +1,12 @@
 import pandas as pd
 import os, time, requests, functools, time
 from typing import Dict, Any, List 
-<<<<<<< HEAD
 from models import db
 from models.ski_resort import SkiResort
 from utils.geo import geocode, haversine_mi
 from utils.weather import current, hourly, daily, ski_summary, multi_day_summary
 from geopy.exc import GeocoderServiceError # for error on distance search
-
-=======
-from weather import current, hourly, daily, ski_summary, multi_day_summary
-from models import db
-from models.ski_resort import SkiResort
 from datetime import date, datetime
->>>>>>> 7ad5133713a6af0dc9deefdde566f50a95ee4833
 
 from flask import Flask, render_template, request #Q0: What happens if you remove render_template from this line?
 
