@@ -32,6 +32,44 @@
   <!-- ── SEARCH FORM ────────────────────────────────────────────────── -->
   <form method="get" action="{{ url_for('search') }}">
 
+    <!-- Date--------------------------------------------------- -->
+    <fieldset>
+      <legend>Date(s)</legend>
+      <div class="compact">
+        <label>Start Date</label>
+        <input type="date" name="startDate" value="{{ startDate }}" min = "{{ today }}">
+        <br>
+        <label>End Date</label>
+        <input type="date" name="endDate" value="{{ endDate }}" min = "{{ startDate }}">
+      </div>
+    </fieldset>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+
+        const startDateInput = document.querySelector('input[name="startDate"]');
+        const endDateInput = document.querySelector('input[name="endDate"]');
+
+        if(!startDateInput.value) {
+          startDateInput.value = today;
+        }
+        if(!endDateInput.value) {
+          endDateInput.value = today;
+        }
+
+        startDateInput.min = today;
+        endDateInput.min = startDateInput.value;
+
+        startDateInput.addEventListener('change', () => {
+          endDateInput.min = startDateInput.value;
+          if (startDateInput.value > endDateInput.value) {
+            endDateInput.value = startDateInput.value;
+          }
+        });
+      });
+    </script>
+
     <!-- Pass --------------------------------------------------------- -->
     <fieldset>
       <legend>Pass</legend>
@@ -130,11 +168,21 @@
   {% if resorts is defined %}
     <h2>Results ({{ resorts|length }})</h2>
     {% if resorts %}
-      <ul>
+      <ol>
         {% for r in resorts %}
-          <li>{{ r.resort_name }} — {{ r.state }} — ${{ r.lift_ticket_price_weekend_usd }}</li>
+          <li>
+            <strong>{{ r.resort.resort_name }}</strong><br>
+            <small>
+              State: {{ r.resort.state }}<br>
+              Price: ${{ r.resort.lift_ticket_price_weekend_usd }}<br>
+              Ski Score: {{ r.score }}<br>
+              Fresh Snow: {{ r.summary.totalSnow }} in<br>
+              Avg Temp: {{ r.summary.avgTemp }}°F<br>
+              Avg Wind: {{ r.summary.avgWind }} mph
+            </small>
+          </li>
         {% endfor %}
-      </ul>
+      </ol>
     {% else %}
       <p>No resorts matched your criteria.</p>
     {% endif %}
