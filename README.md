@@ -1,6 +1,11 @@
 # PowDay
 
-Data: Migrated to DB. import_data.py is used to build db from csv. If instance/ski_resort.db is not there or corrupted it can be made by running `python import_data.py 'path/to/resortdata.csv`
+Remember to `pip install -r requirements.txt` in venv.  
+
+
+If you get ""⚠️ Could not reach the geocoding service – location filter skipped." and or "⚠️ Location not found." this is from the library used to filter search results based on a location and distance around that location. To fix try `/Applications/Python\ 3*/Install\ Certificates.command` ( on mac )
+
+Data: Migrated to DB. import_data.py is used to build db from csv. If instance/ski_resort.db is not there or corrupted it can be made by running `python import_data.py 'path/to/resortdata.csv`  
 
 #### Marco-ToDo:
 - Fix ResortName->ResortPage->Resort image (Currently: Resortpage = /resort/resort_name, DB[resort_name]= "resort name" with spaces and other punctuation and werid chars ö, ResortImage= static/img/resortname  with no spaces)

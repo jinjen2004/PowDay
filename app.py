@@ -1,14 +1,14 @@
 import pandas as pd
 import os, time, requests, functools, time 
 from typing import Dict, Any, List 
-from weather import current, hourly, daily, ski_summary
 from models import db
 from models.ski_resort import SkiResort
+from utils.geo import geocode, haversine_mi
+from utils.weather import current, hourly, daily, ski_summary
+from geopy.exc import GeocoderServiceError # for error on distance search
 
 
-
-
-from flask import Flask, render_template, request  #Q0: What happens if you remove render_template from this line?
+from flask import Flask, render_template, request #Q0: What happens if you remove render_template from this line?
 
 app = Flask(__name__)
 
@@ -19,9 +19,6 @@ db.init_app(app)
 
 with app.app_context(): # Database
     db.create_all()
-
-# Load resort data once when the app starts
-RESORTS_DF = pd.read_csv('data/resorts/Sample_Ski_Resort_Data.csv')
 
 # Our weather API
 BASE = "https://api.openweathermap.org/data"
@@ -63,15 +60,6 @@ def search():
     elif price == "$$$":
         q = q.filter(SkiResort.lift_ticket_price_weekend_usd > 200)
 
-    # Location filter
-    loc = request.args.get("location", "").strip()
-    if loc:
-        q = q.filter(SkiResort.state.ilike(f"%{loc}%"))
-
-    # Distance filter (temporarily disabled until implementation)
-    # dist = request.args.get("dist")
-    # if dist and dist != "Any":
-    #     q = q.filter(SkiResort.distance_mi <= int(dist))
 
     # Size filter using skiable_acres
     size = request.args.get("size")
@@ -99,7 +87,35 @@ def search():
     if snowboard in ("Yes", "No"):
         q = q.filter(SkiResort.allow_snowboard == (snowboard == "Yes"))
 
-    resorts = q.all()
+    loc_txt  = request.args.get("location", "").strip()
+    radius   = request.args.get("dist", "Any")    # 25 / 100 / 150 / Any
+    try:
+        origin = geocode(loc_txt) if loc_txt and radius != "Any" else None
+        print("loc_txt:", loc_txt, "   radius:", radius)          # 1
+        print("origin raw:", origin)                              # 2
+        print("provider status:", getattr(origin, 'raw', None))   # 3
+
+    except GeocoderServiceError as e:
+        print("⚠️ Could not reach the geocoding service – location filter skipped.")
+        origin = None
+
+    if origin and radius != "Any":
+        r_mi = int(radius)           # dropdown guarantees int string
+        # we can’t slice with SQL unless using PostGIS, so filter in Python
+        resorts = []
+        for res in q:                # lazily iterates rows that already
+                                     # passed the earlier filters
+            d = haversine_mi(origin[0], origin[1], res.latitude, res.longitude)
+            if d <= r_mi:
+                res._distance = round(d)          # keep for template
+                resorts.append(res)
+    else:
+        if loc_txt and not origin:
+            print("⚠️ Location not found.")  
+        resorts = q.all()
+
+
+    #resorts = q.all()
     return render_template("search.html", resorts=resorts)
 
 

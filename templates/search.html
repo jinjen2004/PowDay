@@ -55,19 +55,43 @@
 
     <!-- Location & distance ----------------------------------------- -->
     <fieldset>
-      <legend>Location</legend>
-      <div class="compact">
-        <input type="text" name="location" value="{{ f.get('location','') }}" 
-               placeholder="State/Region" style="width: 95%">
-      </div>
-      <div class="compact">
-        <select name="dist">
-          <option value="Any">Any Distance</option>
-          <option value="25"  {{ 'selected' if f.get('dist')=='25'  else '' }}>≤ 25 mi</option>
-          <option value="100" {{ 'selected' if f.get('dist')=='100' else '' }}>≤ 100 mi</option>
-          <option value="150" {{ 'selected' if f.get('dist')=='150' else '' }}>≤ 150 mi</option>
+        <legend>Location & Radius</legend>
+
+        <!-- text input with HTML datalist for quick state/city presets -->
+        <input  type="text"
+        id="location"
+        name="location"
+        list="commonPlaces"         
+        placeholder="City, State or ZIP"
+        value="{{ f.get('location','') }}" />
+
+        <datalist id="commonPlaces">
+            {% for place in ['Denver, CO','Salt Lake City, UT','Seattle, WA','Burlington, VT'] %}
+            <option value="{{ place }}">
+            {% endfor %}
+        </datalist>
+
+        <!-- radius dropdown locked until a location is typed -->
+        <select name="dist" id="radius"
+                {{ '' if f.get('location') else 'disabled' }}>
+            <option value="Any"  {{ 'selected' if radius_entered=='Any'  else '' }}>Any Distance</option>
+            <option value="25"   {{ 'selected' if radius_entered=='50'   else '' }}>≤ 25 mi</option>
+            <option value="100"  {{ 'selected' if radius_entered=='150'  else '' }}>≤ 100 mi</option>
+            <option value="150"  {{ 'selected' if radius_entered=='300'  else '' }}>≤ 150 mi</option>
         </select>
-      </div>
+        <datalist id="commonPlaces">
+            {% for p in ['Denver, CO','Salt Lake City, UT','Seattle, WA'] %}
+              <option value="{{ p }}">
+            {% endfor %}
+        </datalist>
+        <script>
+            const loc   = document.getElementById('location');
+            const rad   = document.getElementById('radius');
+            loc.addEventListener('input', () => {
+                rad.disabled = loc.value.trim() === '';
+                if (rad.disabled) rad.selectedIndex = 0;     // reset to “Any”
+        });
+        </script>
     </fieldset>
 
     <!-- Resort size ------------------------------------------------- -->
