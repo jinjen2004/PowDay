@@ -1,14 +1,14 @@
 import pandas as pd
-import os, time, requests, functools, time 
+import os, time, requests, functools, time
 from typing import Dict, Any, List 
-from weather import current, hourly, daily, ski_summary
 from models import db
 from models.ski_resort import SkiResort
+from utils.geo import geocode, haversine_mi
+from utils.weather import current, hourly, daily, ski_summary, multi_day_summary
+from geopy.exc import GeocoderServiceError # for error on distance search
+from datetime import date, datetime
 
-
-
-
-from flask import Flask, render_template, request  #Q0: What happens if you remove render_template from this line?
+from flask import Flask, render_template, request #Q0: What happens if you remove render_template from this line?
 
 app = Flask(__name__)
 
@@ -20,9 +20,6 @@ db.init_app(app)
 with app.app_context(): # Database
     db.create_all()
 
-# Load resort data once when the app starts
-RESORTS_DF = pd.read_csv('data/resorts/Sample_Ski_Resort_Data.csv')
-
 # Our weather API
 BASE = "https://api.openweathermap.org/data"
 API_KEY = "6a8dc08d5123e7c104b59aa3b4c138d1" # <- terrible practice o well
@@ -33,20 +30,27 @@ def home():
 
 @app.route("/explore")
 def explore():
-    resorts = [
-        ["Vail", "this is a cool resort"],
-        ["Breckenridge", "really hard"],
-        ["Park City Mountain", "awesome awesome awesome"]
-    ]
+    resorts = [["Vail", "this is a cool resort"], ["Breckenridge", "really hard"], ["ParkCity", "awesome awesome awesome"]]
     return render_template('explore.html', collection=resorts)
-
     # The images are referenced by the resort name and are in the static/img folder. Works for now but might not be the best system, storing the image path may be better.
 
 @app.route("/search", methods=["GET"])
 def search():
+    today = date.today().isoformat()
+
+    # Get user-selected dates, or fall back to today / 2 days later
+    startDate = request.args.get('startDate') or today
+    endDate = request.args.get('endDate') or today
+
+    try:
+        startDateFormat = datetime.strptime(startDate, "%Y-%m-%d").date()
+        endDateFormat = datetime.strptime(endDate, "%Y-%m-%d").date()
+    except ValueError:
+        startDateFormat = endDateFormat = date.today()
+
     if not request.args:
         return render_template("search.html")
-
+    
     q = SkiResort.query
 
     # Pass type filter
@@ -63,15 +67,6 @@ def search():
     elif price == "$$$":
         q = q.filter(SkiResort.lift_ticket_price_weekend_usd > 200)
 
-    # Location filter
-    loc = request.args.get("location", "").strip()
-    if loc:
-        q = q.filter(SkiResort.state.ilike(f"%{loc}%"))
-
-    # Distance filter (temporarily disabled until implementation)
-    # dist = request.args.get("dist")
-    # if dist and dist != "Any":
-    #     q = q.filter(SkiResort.distance_mi <= int(dist))
 
     # Size filter using skiable_acres
     size = request.args.get("size")
@@ -99,16 +94,83 @@ def search():
     if snowboard in ("Yes", "No"):
         q = q.filter(SkiResort.allow_snowboard == (snowboard == "Yes"))
 
-    resorts = q.all()
-    return render_template("search.html", resorts=resorts)
+    loc_txt  = request.args.get("location", "").strip()
+    radius   = request.args.get("dist", "Any")    # 25 / 100 / 150 / Any
+    try:
+        origin = geocode(loc_txt) if loc_txt and radius != "Any" else None
+        print("loc_txt:", loc_txt, "   radius:", radius)          # 1
+        print("origin raw:", origin)                              # 2
+        print("provider status:", getattr(origin, 'raw', None))   # 3
 
+    except GeocoderServiceError as e:
+        print("⚠️ Could not reach the geocoding service – location filter skipped.")
+        origin = None
+
+    if origin and radius != "Any":
+        r_mi = int(radius)           # dropdown guarantees int string
+        # we can’t slice with SQL unless using PostGIS, so filter in Python
+        resorts = []
+        for res in q:                # lazily iterates rows that already
+                                     # passed the earlier filters
+            d = haversine_mi(origin[0], origin[1], res.latitude, res.longitude)
+            if d <= r_mi:
+                res._distance = round(d)          # keep for template
+                resorts.append(res)
+    else:
+        if loc_txt and not origin:
+            print("⚠️ Location not found.")  
+        resorts = q.all()
+
+
+    #resorts = q.all()
+
+    resortsWithScores = []
+
+    for resort in resorts:
+        lat, lon = resort.latitude, resort.longitude
+        try:
+            summary = multi_day_summary(lat, lon, startDateFormat, endDateFormat)
+            if summary is None:
+                continue  # skip this resort if weather lookup failed
+
+            resort_score = score(summary)
+
+            resortsWithScores.append({
+                "resort": resort,
+                "score": resort_score,
+                "summary": summary
+            })
+
+        except Exception as e:
+            print(f"Error fetching weather for {resort.resort_name}: {e}")
+    
+    resortsWithScores.sort(key=lambda r: r["score"], reverse=True)
+
+    return render_template("search.html", resorts=resortsWithScores, startDate = startDate, endDate = endDate, today=today)
+
+def score(summary: dict) -> float:
+
+    """
+    Returns a score for the resort based on the weather summary.
+    Fresh snowfall --> weight of 60
+    Temperature (close to 32F) --> weight of 25
+    Wind (low) --> weight of 15
+    """
+
+    totalSnow = summary["totalSnow"]
+    avgTemp = summary["avgTemp"]
+    avgWind = summary["avgWind"]
+
+    snowScore = min(totalSnow, 18)/18 * 60
+    tempScore = (32 - abs(avgTemp - 32)) / 32 * 25 
+    windScore = (10 - avgWind) / 10 * 15
+    return snowScore + tempScore + windScore
 
 @app.route("/resort/<resort_name>")
 def resort(resort_name):
+    print(f"Resort name: {resort_name}")
     # Query database using SQLAlchemy model
-    readable_name = resort_name.replace("_", " ")
-
-    row = SkiResort.query.filter_by(resort_name=readable_name).first()
+    row = SkiResort.query.filter_by(resort_name=resort_name).first()
     
     if not row:
         abort(404)

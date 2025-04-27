@@ -99,4 +99,31 @@ def ski_summary(hourly_data):
         "coldest": coldest             # °F
     }
 
+def multi_day_summary(lat: float, lon: float, start: dt, end: dt) -> dict:
+    try:
+        forecasts = daily(lat, lon)
+    except requests.RequestException as e:
+        print(f"Error fetching daily forecast: {e}")
+        return None
+    
+    totalSnow = 0
+    temps = []
+    wind = []
 
+    for forecast in forecasts:
+        forecastDate = dt.fromtimestamp(forecast["dt"]).date()
+        if start <= forecastDate <= end:
+            totalSnow += forecast["snow"]
+            temps.append(forecast["max"])
+            wind.append(forecast["wind"])
+    
+    avgTemp = sum(temps) / len(temps) if temps else 0
+    avgWind = sum(wind) / len(wind) if wind else 0
+
+    return {
+        "totalSnow": totalSnow,
+        "avgTemp": round(avgTemp),
+        "avgWind": round(avgWind)
+    }
+    # Return a dictionary with the total snow, average temperature, and average wind speed
+    # for the specified date range

@@ -32,6 +32,44 @@
   <!-- ── SEARCH FORM ────────────────────────────────────────────────── -->
   <form method="get" action="{{ url_for('search') }}">
 
+    <!-- Date--------------------------------------------------- -->
+    <fieldset>
+      <legend>Date(s)</legend>
+      <div class="compact">
+        <label>Start Date</label>
+        <input type="date" name="startDate" value="{{ startDate }}" min = "{{ today }}">
+        <br>
+        <label>End Date</label>
+        <input type="date" name="endDate" value="{{ endDate }}" min = "{{ startDate }}">
+      </div>
+    </fieldset>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+
+        const startDateInput = document.querySelector('input[name="startDate"]');
+        const endDateInput = document.querySelector('input[name="endDate"]');
+
+        if(!startDateInput.value) {
+          startDateInput.value = today;
+        }
+        if(!endDateInput.value) {
+          endDateInput.value = today;
+        }
+
+        startDateInput.min = today;
+        endDateInput.min = startDateInput.value;
+
+        startDateInput.addEventListener('change', () => {
+          endDateInput.min = startDateInput.value;
+          if (startDateInput.value > endDateInput.value) {
+            endDateInput.value = startDateInput.value;
+          }
+        });
+      });
+    </script>
+
     <!-- Pass --------------------------------------------------------- -->
     <fieldset>
       <legend>Pass</legend>
@@ -55,19 +93,43 @@
 
     <!-- Location & distance ----------------------------------------- -->
     <fieldset>
-      <legend>Location</legend>
-      <div class="compact">
-        <input type="text" name="location" value="{{ f.get('location','') }}" 
-               placeholder="State/Region" style="width: 95%">
-      </div>
-      <div class="compact">
-        <select name="dist">
-          <option value="Any">Any Distance</option>
-          <option value="25"  {{ 'selected' if f.get('dist')=='25'  else '' }}>≤ 25 mi</option>
-          <option value="100" {{ 'selected' if f.get('dist')=='100' else '' }}>≤ 100 mi</option>
-          <option value="150" {{ 'selected' if f.get('dist')=='150' else '' }}>≤ 150 mi</option>
+        <legend>Location & Radius</legend>
+
+        <!-- text input with HTML datalist for quick state/city presets -->
+        <input  type="text"
+        id="location"
+        name="location"
+        list="commonPlaces"         
+        placeholder="City, State or ZIP"
+        value="{{ f.get('location','') }}" />
+
+        <datalist id="commonPlaces">
+            {% for place in ['Denver, CO','Salt Lake City, UT','Seattle, WA','Burlington, VT'] %}
+            <option value="{{ place }}">
+            {% endfor %}
+        </datalist>
+
+        <!-- radius dropdown locked until a location is typed -->
+        <select name="dist" id="radius"
+                {{ '' if f.get('location') else 'disabled' }}>
+            <option value="Any"  {{ 'selected' if radius_entered=='Any'  else '' }}>Any Distance</option>
+            <option value="25"   {{ 'selected' if radius_entered=='50'   else '' }}>≤ 25 mi</option>
+            <option value="100"  {{ 'selected' if radius_entered=='150'  else '' }}>≤ 100 mi</option>
+            <option value="150"  {{ 'selected' if radius_entered=='300'  else '' }}>≤ 150 mi</option>
         </select>
-      </div>
+        <datalist id="commonPlaces">
+            {% for p in ['Denver, CO','Salt Lake City, UT','Seattle, WA'] %}
+              <option value="{{ p }}">
+            {% endfor %}
+        </datalist>
+        <script>
+            const loc   = document.getElementById('location');
+            const rad   = document.getElementById('radius');
+            loc.addEventListener('input', () => {
+                rad.disabled = loc.value.trim() === '';
+                if (rad.disabled) rad.selectedIndex = 0;     // reset to “Any”
+        });
+        </script>
     </fieldset>
 
     <!-- Resort size ------------------------------------------------- -->
@@ -130,11 +192,21 @@
   {% if resorts is defined %}
     <h2>Results ({{ resorts|length }})</h2>
     {% if resorts %}
-      <ul>
+      <ol>
         {% for r in resorts %}
-          <li>{{ r.resort_name }} — {{ r.state }} — ${{ r.lift_ticket_price_weekend_usd }}</li>
+          <li>
+            <strong>{{ r.resort.resort_name }}</strong><br>
+            <small>
+              State: {{ r.resort.state }}<br>
+              Price: ${{ r.resort.lift_ticket_price_weekend_usd }}<br>
+              Ski Score: {{ r.score }}<br>
+              Fresh Snow: {{ r.summary.totalSnow }} in<br>
+              Avg Temp: {{ r.summary.avgTemp }}°F<br>
+              Avg Wind: {{ r.summary.avgWind }} mph
+            </small>
+          </li>
         {% endfor %}
-      </ul>
+      </ol>
     {% else %}
       <p>No resorts matched your criteria.</p>
     {% endif %}
