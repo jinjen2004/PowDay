@@ -1,0 +1,32 @@
+.booking-details {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+.weather-box{
+    background: darkblue;
+    border-radius:0.7rem;
+    padding:1rem 1.2rem;
+    width:50%;
+}
+.wx-temp{ font-size:2rem; font-weight:700; margin:0.2rem 0; }
+.wx-desc{ margin-top:0; text-transform:capitalize; }
+.ski-metrics{ list-style:none; padding-left:0; margin:0; }
+.ski-metrics li{ margin:0.2rem 0; }
+
+/* forecast table --------------------------------------------------------*/
+.forecast-toggle summary{
+    cursor:pointer;
+    padding:0.4rem 0;
+}
+.forecast-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.9rem;
+    margin-top:0.6rem;
+}
+.forecast-table th,
+.forecast-table td{
+    border-bottom:1px solid #e5e5e5;
+    padding:0.3rem 0.4rem;
+}

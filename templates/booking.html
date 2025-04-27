@@ -9,17 +9,60 @@
             <li><a href="{{url_for('explore')}}">Explore</a></li>
             <li><a href="{{url_for('search')}}">Search</a></li>
         </ul>
-        <form>
-            <label for="startdate">Start Date: </label>
-            <input type="date" id="startdate" name="startdate">
-            <br>
-            <label for="enddate">End Date: </label>
-            <input type="date" id="enddate" name="enddate">
-            <br><br>
-            <input type="button" class="button" onclick="test()" value="Something">
-            <br>
-            <p><span id="validtext"></span></p>
-        </form>
+        <main class="booking-details">
+            <div class="weather-box">
+                <h2>{{resort.resort_name}}</h2>
+                <img src="https://openweathermap.org/img/wn/{{ wx_now.icon }}@2x.png"
+                     alt="{{ wx_now.desc }}">
+                <p class="wx-temp">{{ wx_now.temp }}°F</p>
+                <p class="wx-desc">{{ wx_now.desc }}</p>
+                <p>Feels like {{ wx_now.feels_like }}°F</p>
+                <p>Wind {{ wx_now.wind }} mph
+                   {% if wx_now.gust %}(gust {{ wx_now.gust }} mph){% endif %}</p>
+    
+                <hr>
+                <h3>Next 24 h at a glance</h3>
+                <ul class="ski-metrics">
+                    <li>New snow <strong>{{ wx_ski.fresh_24h }} mm</strong></li>
+                    <li>Coldest hour <strong>{{ wx_ski.coldest }}°F</strong></li>
+                    <li>Peak gust <strong>{{ wx_ski.max_gust }} mph</strong></li>
+                </ul>
+    
+                {% if wx_daily %}
+                <details class="forecast-toggle">
+                    <summary>5‑Day Outlook</summary>
+                    <table class="forecast-table">
+                        <thead>
+                            <tr><th>Day</th><th>Snow (mm)</th><th>Hi / Lo °F</th><th>Wind mph</th></tr>
+                        </thead>
+                        <tbody>
+                        {% for d in wx_daily %}
+                            <tr>
+                              <td>{{ d.day }}</td>
+                              <td>{{ d.snow }}</td>
+                              <td>{{ d.max }} / {{ d.min }}</td>
+                              <td>{{ d.wind|round }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </details>
+                {% endif %}
+            </div>
+            <div class="scheduler">
+                <form>
+                    <label for="startdate">Start Date: </label>
+                    <input type="date" id="startdate" name="startdate">
+                    <br>
+                    <label for="enddate">End Date: </label>
+                    <input type="date" id="enddate" name="enddate">
+                    <br><br>
+                    <input type="button" class="button" onclick="test()" value="Something">
+                    <br>
+                    <p><span id="validtext"></span></p>
+                </form>
+            </div>
+        </main>
         <script src="{{url_for('static',filename='js/booking.js')}}"></script>
     </body>
 </html>
