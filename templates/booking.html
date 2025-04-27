@@ -15,7 +15,10 @@
             <br>
             <label for="enddate">End Date: </label>
             <input type="date" id="enddate" name="enddate">
-            <input type="button" onclick="test()">
+            <br><br>
+            <input type="button" class="button" onclick="test()" value="Something">
+            <br>
+            <p><span id="validtext"></span></p>
         </form>
         <script src="{{url_for('static',filename='js/booking.js')}}"></script>
     </body>
