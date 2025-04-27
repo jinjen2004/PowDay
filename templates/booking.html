@@ -11,7 +11,7 @@
         </ul>
         <main class="booking-details">
             <div class="weather-box">
-                <h2>{{resort.resort_name}}</h2>
+                <h2>Book a trip at {{resort.resort_name}}</h2>
                 <img src="https://openweathermap.org/img/wn/{{ wx_now.icon }}@2x.png"
                      alt="{{ wx_now.desc }}">
                 <p class="wx-temp">{{ wx_now.temp }}°F</p>
@@ -57,7 +57,8 @@
                     <label for="enddate">End Date: </label>
                     <input type="date" id="enddate" name="enddate">
                     <br><br>
-                    <input type="button" class="button" onclick="test()" value="Something">
+                    <!-- might have to change to submit for routing purposes? -->
+                    <input type="button" class="button" onclick="test()" value="Book">
                     <br>
                     <p><span id="validtext"></span></p>
                 </form>
