@@ -210,6 +210,10 @@ def debug_db():
     resorts = SkiResort.query.all()
     return f"Found {len(resorts)} resorts: {[r.resort_name for r in resorts]}"
 
+@app.route("/success/<resort_name>")
+def success(resort_name):
+    return render_template("success.html", resort=resort_name)
+
 
 if __name__ == "__main__":
     app.debug = True

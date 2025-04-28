@@ -50,7 +50,6 @@
                 {% endif %}
             </div>
             <div class="scheduler">
-                <form>
                     <label for="startdate">Start Date: </label>
                     <input type="date" id="startdate" name="startdate">
                     <br>
@@ -58,10 +57,11 @@
                     <input type="date" id="enddate" name="enddate">
                     <br><br>
                     <!-- might have to change to submit for routing purposes? -->
-                    <input type="button" class="button" onclick="test()" value="Book">
+                    <a href="{{ url_for('success',resort_name=resort.resort_name)}}">
+                        <button class="button">Book Trip</button>
+                    </a>
                     <br>
                     <p><span id="validtext"></span></p>
-                </form>
             </div>
         </main>
         <script src="{{url_for('static',filename='js/booking.js')}}"></script>
