@@ -109,13 +109,22 @@ def multi_day_summary(lat: float, lon: float, start: dt, end: dt) -> dict:
     totalSnow = 0
     temps = []
     wind = []
+    dailySummaries = []
 
     for forecast in forecasts:
         forecastDate = dt.fromtimestamp(forecast["dt"]).date()
         if start <= forecastDate <= end:
+            daySummary = {
+                "date": forecastDate,
+                "max": forecast["max"],
+                "min": forecast["min"],
+                "wind": forecast["wind"],
+                "snow": forecast["snow"],
+            }
             totalSnow += forecast["snow"]
             temps.append(forecast["max"])
             wind.append(forecast["wind"])
+            dailySummaries.append(daySummary)
     
     avgTemp = sum(temps) / len(temps) if temps else 0
     avgWind = sum(wind) / len(wind) if wind else 0
@@ -123,7 +132,26 @@ def multi_day_summary(lat: float, lon: float, start: dt, end: dt) -> dict:
     return {
         "totalSnow": totalSnow,
         "avgTemp": round(avgTemp),
-        "avgWind": round(avgWind)
+        "avgWind": round(avgWind),
+        "dailySummaries": dailySummaries
     }
     # Return a dictionary with the total snow, average temperature, and average wind speed
     # for the specified date range
+
+def score(summary: dict) -> float:
+
+    """
+    Returns a score for the resort based on the weather summary.
+    Fresh snowfall --> weight of 60
+    Temperature (close to 32F) --> weight of 25
+    Wind (low) --> weight of 15
+    """
+
+    totalSnow = summary["totalSnow"]
+    avgTemp = summary["avgTemp"]
+    avgWind = summary["avgWind"]
+
+    snowScore = min(totalSnow, 18)/18 * 60
+    tempScore = (32 - abs(avgTemp - 32)) / 32 * 25 
+    windScore = (10 - avgWind) / 10 * 15
+    return snowScore + tempScore + windScore
