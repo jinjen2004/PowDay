@@ -1,14 +1,15 @@
 import pandas as pd
 import os, time, requests, functools, time
 from typing import Dict, Any, List 
+from utils.weather import current, hourly, daily, ski_summary, multi_day_summary, score
 from models import db
 from models.ski_resort import SkiResort
-from utils.geo import geocode, haversine_mi
-from utils.weather import current, hourly, daily, ski_summary, multi_day_summary
-from geopy.exc import GeocoderServiceError # for error on distance search
 from datetime import date, datetime
+from utils.distance import geocode_location, haversine
 
-from flask import Flask, render_template, request #Q0: What happens if you remove render_template from this line?
+
+
+from flask import Flask, render_template, request  #Q0: What happens if you remove render_template from this line?
 
 app = Flask(__name__)
 
@@ -19,6 +20,9 @@ db.init_app(app)
 
 with app.app_context(): # Database
     db.create_all()
+
+# Load resort data once when the app starts
+RESORTS_DF = pd.read_csv('data/resorts/Sample_Ski_Resort_Data.csv')
 
 # Our weather API
 BASE = "https://api.openweathermap.org/data"
@@ -67,7 +71,6 @@ def search():
     elif price == "$$$":
         q = q.filter(SkiResort.lift_ticket_price_weekend_usd > 200)
 
-
     # Size filter using skiable_acres
     size = request.args.get("size")
     if size and size != "Any":
@@ -94,40 +97,38 @@ def search():
     if snowboard in ("Yes", "No"):
         q = q.filter(SkiResort.allow_snowboard == (snowboard == "Yes"))
 
-    loc_txt  = request.args.get("location", "").strip()
-    radius   = request.args.get("dist", "Any")    # 25 / 100 / 150 / Any
-    try:
-        origin = geocode(loc_txt) if loc_txt and radius != "Any" else None
-        print("loc_txt:", loc_txt, "   radius:", radius)          # 1
-        print("origin raw:", origin)                              # 2
-        print("provider status:", getattr(origin, 'raw', None))   # 3
+    resorts = q.all()
 
-    except GeocoderServiceError as e:
-        print("⚠️ Could not reach the geocoding service – location filter skipped.")
-        origin = None
+    # Distance filter
+    loc = request.args.get("location", "").strip()
+    dist = request.args.get("dist", "Any")
 
-    if origin and radius != "Any":
-        r_mi = int(radius)           # dropdown guarantees int string
-        # we can’t slice with SQL unless using PostGIS, so filter in Pwhython
-        resorts = []
-        for res in q:                # lazily iterates rows that already
-                                     # passed the earlier filters
-            d = haversine_mi(origin[0], origin[1], res.latitude, res.longitude)
-            if d <= r_mi:
-                res._distance = round(d)          # keep for template
-                resorts.append(res)
+    if loc and dist != "Any":
+        try:
+            user_lat, user_lng = geocode_location(loc)
+            dist_miles = int(dist)
+
+            resorts = q.all()
+
+            filtered_resorts = []
+            for resort in resorts:
+                distance = haversine(user_lat, user_lng, resort.latitude, resort.longitude)
+                if distance <= dist_miles:
+                    filtered_resorts.append(resort)
+
+            resorts = filtered_resorts
+
+        except Exception as e:
+            print(f"Error during geocoding or distance filtering: {e}")
+            resorts = q.all()
     else:
-        if loc_txt and not origin:
-            print("⚠️ Location not found.")  
         resorts = q.all()
-
-
-    #resorts = q.all()
 
     resortsWithScores = []
 
     for resort in resorts:
         lat, lon = resort.latitude, resort.longitude
+        
         try:
             summary = multi_day_summary(lat, lon, startDateFormat, endDateFormat)
             if summary is None:
@@ -147,24 +148,6 @@ def search():
     resortsWithScores.sort(key=lambda r: r["score"], reverse=True)
 
     return render_template("search.html", resorts=resortsWithScores, startDate = startDate, endDate = endDate, today=today)
-
-def score(summary: dict) -> float:
-
-    """
-    Returns a score for the resort based on the weather summary.
-    Fresh snowfall --> weight of 60
-    Temperature (close to 32F) --> weight of 25
-    Wind (low) --> weight of 15
-    """
-
-    totalSnow = summary["totalSnow"]
-    avgTemp = summary["avgTemp"]
-    avgWind = summary["avgWind"]
-
-    snowScore = min(totalSnow, 18)/18 * 60
-    tempScore = (32 - abs(avgTemp - 32)) / 32 * 25 
-    windScore = (10 - avgWind) / 10 * 15
-    return snowScore + tempScore + windScore
 
 @app.route("/resort/<resort_name>")
 def resort(resort_name):
@@ -195,32 +178,6 @@ def resort(resort_name):
         wx_daily=d_next,
         owm_key=API_KEY
     )
-@app.route("/booking/<resort_name>") 
-def booking(resort_name):
-    print(f"Resort name: {resort_name}")
-    # Query database using SQLAlchemy model
-    row = SkiResort.query.filter_by(resort_name=resort_name).first()
-    
-    if not row:
-        abort(404)
-        
-    # Convert SQLAlchemy model instance to dictionary
-    info = {c.name: getattr(row, c.name) for c in row.__table__.columns}
-    
-    # Get coordinates for weather data
-    lat, lon = info["latitude"], info["longitude"]
-    
-    # Fetch weather data (existing implementation)
-    c_now   = current(lat, lon)
-    h_next  = hourly(lat, lon)
-    d_next  = daily(lat, lon)       
-    summary = ski_summary(h_next)
-
-    return render_template('booking.html',        resort=info,
-        wx_now=c_now,
-        wx_ski=summary,
-        wx_daily=d_next,
-        owm_key=API_KEY)
 
 @app.route("/debug-db")
 def debug_db():
