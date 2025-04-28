@@ -178,6 +178,32 @@ def resort(resort_name):
         wx_daily=d_next,
         owm_key=API_KEY
     )
+@app.route("/booking/<resort_name>") 
+def booking(resort_name):
+     print(f"Resort name: {resort_name}")
+     # Query database using SQLAlchemy model
+     row = SkiResort.query.filter_by(resort_name=resort_name).first()
+     
+     if not row:
+         abort(404)
+         
+     # Convert SQLAlchemy model instance to dictionary
+     info = {c.name: getattr(row, c.name) for c in row.__table__.columns}
+     
+     # Get coordinates for weather data
+     lat, lon = info["latitude"], info["longitude"]
+     
+     # Fetch weather data (existing implementation)
+     c_now   = current(lat, lon)
+     h_next  = hourly(lat, lon)
+     d_next  = daily(lat, lon)       
+     summary = ski_summary(h_next)
+ 
+     return render_template('booking.html', resort=info,
+         wx_now=c_now,
+         wx_ski=summary,
+         wx_daily=d_next,
+         owm_key=API_KEY)
 
 @app.route("/debug-db")
 def debug_db():
