@@ -1,18 +1,23 @@
-function test() {
-    const startdateInput = document.getElementById('startdate');
-    const startdateString = startdateInput.value;
-    const startdate = new Date(startdateString + "T00:00");
+document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
 
-    const enddateInput = document.getElementById('enddate');
-    const enddateString = enddateInput.value;
-    const enddate = new Date(enddateString + "T00:00");
+    const startDateInput = document.querySelector('input[name="startdate"]');
+    const endDateInput = document.querySelector('input[name="enddate"]');
 
-    const today = new Date();
-
-    if(startdate > enddate || startdate <= today) {
-        document.getElementById("validtext").innerHTML = "invalid date input";
+    if(!startDateInput.value) {
+      startDateInput.value = today;
     }
-    else {
-        document.getElementById("validtext").innerHTML = "";
+    if(!endDateInput.value) {
+      endDateInput.value = today;
     }
-}
+
+    startDateInput.min = today;
+    endDateInput.min = startDateInput.value;
+
+    startDateInput.addEventListener('change', () => {
+      endDateInput.min = startDateInput.value;
+      if (startDateInput.value > endDateInput.value) {
+        endDateInput.value = startDateInput.value;
+      }
+    });
+  });
