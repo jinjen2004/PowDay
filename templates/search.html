@@ -7,6 +7,7 @@
   <title>Ski Resort Search</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     /* Temporary inline styling for compact layout */
     fieldset { 
@@ -24,9 +25,9 @@
 </head>
 <body>
   <ul>
-    <li><a href="{{url_for('home')}}">Home</a></li>
+    <li><a class="active" href="{{url_for('home')}}">Home</a></li>
     <li><a href="{{url_for('explore')}}">Explore</a></li>
-    <li><a class="active" href="{{url_for('search')}}">Search</a></li>
+    <li><a href="{{url_for('search')}}">Search</a></li>
   </ul>
   <main> 
   <!-- ── SEARCH FORM ────────────────────────────────────────────────── -->
@@ -93,43 +94,19 @@
 
     <!-- Location & distance ----------------------------------------- -->
     <fieldset>
-        <legend>Location & Radius</legend>
-
-        <!-- text input with HTML datalist for quick state/city presets -->
-        <input  type="text"
-        id="location"
-        name="location"
-        list="commonPlaces"         
-        placeholder="City, State or ZIP"
-        value="{{ f.get('location','') }}" />
-
-        <datalist id="commonPlaces">
-            {% for place in ['Denver, CO','Salt Lake City, UT','Seattle, WA','Burlington, VT'] %}
-            <option value="{{ place }}">
-            {% endfor %}
-        </datalist>
-
-        <!-- radius dropdown locked until a location is typed -->
-        <select name="dist" id="radius"
-                {{ '' if f.get('location') else 'disabled' }}>
-            <option value="Any"  {{ 'selected' if radius_entered=='Any'  else '' }}>Any Distance</option>
-            <option value="25"   {{ 'selected' if radius_entered=='50'   else '' }}>≤ 25 mi</option>
-            <option value="100"  {{ 'selected' if radius_entered=='150'  else '' }}>≤ 100 mi</option>
-            <option value="150"  {{ 'selected' if radius_entered=='300'  else '' }}>≤ 150 mi</option>
+      <legend>Location</legend>
+      <div class="compact">
+        <input type="text" name="location" value="{{ f.get('location','') }}" 
+               placeholder="State/Region" style="width: 95%">
+      </div>
+      <div class="compact">
+        <select name="dist">
+          <option value="Any">Any Distance</option>
+          <option value="25"  {{ 'selected' if f.get('dist')=='25'  else '' }}>≤ 25 mi</option>
+          <option value="100" {{ 'selected' if f.get('dist')=='100' else '' }}>≤ 100 mi</option>
+          <option value="150" {{ 'selected' if f.get('dist')=='150' else '' }}>≤ 150 mi</option>
         </select>
-        <datalist id="commonPlaces">
-            {% for p in ['Denver, CO','Salt Lake City, UT','Seattle, WA'] %}
-              <option value="{{ p }}">
-            {% endfor %}
-        </datalist>
-        <script>
-            const loc   = document.getElementById('location');
-            const rad   = document.getElementById('radius');
-            loc.addEventListener('input', () => {
-                rad.disabled = loc.value.trim() === '';
-                if (rad.disabled) rad.selectedIndex = 0;     // reset to “Any”
-        });
-        </script>
+      </div>
     </fieldset>
 
     <!-- Resort size ------------------------------------------------- -->
@@ -190,20 +167,47 @@
 
   <!-- ── SEARCH RESULTS ─────────────────────────────────────────────── -->
   {% if resorts is defined %}
+    <h2>Map</h2>
+    <div id="map" style="height: 600px; width: 100%; margin-top: 1em;"></div>
     <h2>Results ({{ resorts|length }})</h2>
     {% if resorts %}
       <ol>
         {% for r in resorts %}
           <li>
-            <strong>{{ r.resort.resort_name }}</strong><br>
+            <div class="resortName">{{ r.resort.resort_name }}</div>
             <small>
               State: {{ r.resort.state }}<br>
               Price: ${{ r.resort.lift_ticket_price_weekend_usd }}<br>
-              Ski Score: {{ r.score }}<br>
-              Fresh Snow: {{ r.summary.totalSnow }} in<br>
-              Avg Temp: {{ r.summary.avgTemp }}°F<br>
-              Avg Wind: {{ r.summary.avgWind }} mph
             </small>
+            <div class="forecastWrapper">
+              {% if r.summary.dailySummaries %}
+              <div class="forecastTitle">Forecast:</div>
+              {% if r.score >= 80 %}
+                <span class="score1">Weather Score: {{ r.score | round(1) }}</span>
+              {% elif r.score >= 60 %}
+                <span class="score2">Weather Score: {{ r.score | round(1) }}</span>
+              {% elif r.score >= 40 %}
+                <span class="score3">Weather Score: {{ r.score | round(1) }}</span>
+              {% elif r.score >= 20 %}
+                <span class="score4">Weather Score: {{ r.score | round(1) }}</span>
+              {% else %}
+                <span class="score5">Weather Score: {{ r.score | round(1) }}</span>
+              {% endif %}
+              <div class="forecast">
+                  {% for day in r.summary.dailySummaries %}
+                    <div class="forecastDay">
+                      <div class = "forecastDate">
+                        {{ day.date.strftime('%a, %b %d') }}
+                      </div>
+                      <i class="fas fa-snowflake"></i> {{ day.snow }} in <br>
+                      <i class="fas fa-temperature-high"></i> {{ day.max }}°F <br>
+                      <i class="fas fa-temperature-low"></i> {{ day.min }}°F <br>
+                      <i class="fas fa-wind"></i> {{ day.wind }} mph <br>
+                    </div>
+                  {% endfor %}
+              </div>
+              {% endif %}
+            </div>
           </li>
         {% endfor %}
       </ol>
@@ -253,5 +257,67 @@
       });
     }
   </script>
+
+  <script>
+    // Google Maps API
+    let activeInfoWindow = null;
+    
+    function initMap() {
+      const resortsList = [
+        {% for r in resorts %}
+          {
+            position: { lat: {{ r.resort.latitude }}, lng: {{ r.resort.longitude }} },
+            title: "{{ r.resort.resort_name|escape }}",
+            score: {{ r.score|round(1) }}
+          }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ];
+
+      const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 6,
+        center: { lat: 39.8283, lng: -98.5795 } // Center of the US
+      });
+
+      resortsList.forEach(resort => {
+        createMarker(resort, map);
+      });
+    }
+  
+    function createMarker(resort, map) {
+      let markerColor;
+      if (resort.score >= 80) {
+        markerColor = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+      } else if (resort.score >= 60) {
+        markerColor = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+      } else if (resort.score >= 40) {
+        markerColor = 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+      } else {
+        markerColor = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+      } 
+  
+      const marker = new google.maps.Marker({
+        position: { lat: resort.position.lat, lng: resort.position.lng },
+        map: map,
+        title: resort.title,
+        icon: markerColor
+      });
+  
+      const infowindow = new google.maps.InfoWindow({
+        content: `
+          <div style="color: black;">
+            <h3>${resort.title}</h3>
+            <p>Score: ${resort.score}</p>
+          </div>
+        `
+      });
+  
+      marker.addListener('click', () => {
+        if (activeInfoWindow) activeInfoWindow.close();
+        infowindow.open(map, marker);
+        activeInfoWindow = infowindow;
+      });
+    }  
+  </script>  
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzDUoFbFMjXUroFZEJgmuORhurXdoZR7E&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
 </html>
