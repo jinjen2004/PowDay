@@ -47,3 +47,16 @@ ul {
     font-size: 16px;
     cursor: pointer;
 }
+  ol {
+    list-style-position: outside;
+    padding-left: 1.5em;
+  }
+
+  ol li {
+    display: block;
+    margin-bottom: 1em;
+    padding: 1em;
+    border: 1px solid white;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+  }

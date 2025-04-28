@@ -75,4 +75,80 @@ input [type="text"] {
     background: #04AA6D;
     cursor: pointer;
   }
+
+  .resortName{
+    font-size: 2.0em;
+    font-weight: bold;
+    color: #ababf7;
+    margin-bottom: 0.2em;
+  }
+  
+  .forecastWrapper {
+    margin-top: 1em;
+    padding: 1em;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+  }
+
+  .forecastTitle {
+    font-weight: bold;
+    font-size: 1.5em;
+    color: #ababf7;
+  }
+
+  .score1 {
+    color: #00ff00;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+  }
+
+  .score2 {
+    color: #C0ff00;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+  }
+
+  .score3 {
+    color: #ffff00;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+  }
+
+  .score4 {
+    color: #ff8000;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+  }
+
+  .score5 {
+    color: #ff3333;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+  }
+
+  .forecast {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+
+  .forecastDay {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    text-align: center;
+    width: 120px; /* adjust if needed */
+    color: #fff;
+  }
+
+  .forecastDate {
+    font-weight: bold;
+    margin-bottom: 0.3em;
+  }
+
   
