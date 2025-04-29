@@ -102,9 +102,12 @@
       <div class="compact">
         <select name="dist">
           <option value="Any">Any Distance</option>
-          <option value="25"  {{ 'selected' if f.get('dist')=='25'  else '' }}>≤ 25 mi</option>
+          <option value="50"  {{ 'selected' if f.get('dist')=='50'  else '' }}>≤ 50 mi</option>
           <option value="100" {{ 'selected' if f.get('dist')=='100' else '' }}>≤ 100 mi</option>
           <option value="150" {{ 'selected' if f.get('dist')=='150' else '' }}>≤ 150 mi</option>
+          <option value="200" {{ 'selected' if f.get('dist')=='200' else '' }}>≤ 200 mi</option>
+          <option value="250" {{ 'selected' if f.get('dist')=='250' else '' }}>≤ 250 mi</option>
+          <option value="300" {{ 'selected' if f.get('dist')=='300' else '' }}>≤ 300 mi</option>
         </select>
       </div>
     </fieldset>
@@ -174,7 +177,11 @@
       <ol>
         {% for r in resorts %}
           <li>
-            <div class="resortName">{{ r.resort.resort_name }}</div>
+            <div class="resortName">
+              <a href="{{ url_for('resort', resort_name=r.resort.resort_name.replace(' ', '_')) }}">
+                {{r.resort.resort_name}}
+              </a>
+            </div>
             <small>
               State: {{ r.resort.state }}<br>
               Price: ${{ r.resort.lift_ticket_price_weekend_usd }}<br>

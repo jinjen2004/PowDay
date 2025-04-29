@@ -10,11 +10,9 @@
     </ul>
 
     <div class="resort-info">
-        {% for item, desc in collection %}
-            <img src="{{ url_for('static', filename='img/' + item.lower().replace(' ', '_') + '.jpeg') }}"/>
-            <h1>{{ item }}</h1>
-            <p>{{ desc }}</p>
-            <a href="{{ url_for('resort', resort_name=item.replace(' ', '_')) }}">
+        {% for resort in resortList %}
+            <h1>{{ resort.resort_name }}</h1>
+            <a href="{{ url_for('resort', resort_name=resort.resort_name.replace(' ', '_')) }}">
                 <button class="button">Read More</button>
             </a>
         {% endfor %}

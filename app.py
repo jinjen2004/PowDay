@@ -34,8 +34,8 @@ def home():
 
 @app.route("/explore")
 def explore():
-    resorts = [["Vail", "this is a cool resort"], ["Breckenridge", "really hard"], ["ParkCity", "awesome awesome awesome"]]
-    return render_template('explore.html', collection=resorts)
+    resorts = SkiResort.query.all()
+    return render_template('explore.html', resortList=resorts)
     # The images are referenced by the resort name and are in the static/img folder. Works for now but might not be the best system, storing the image path may be better.
 
 @app.route("/search", methods=["GET"])
@@ -153,6 +153,7 @@ def search():
 def resort(resort_name):
     print(f"Resort name: {resort_name}")
     # Query database using SQLAlchemy model
+    resort_name = resort_name.replace("-", " ").replace("_", " ")
     row = SkiResort.query.filter_by(resort_name=resort_name).first()
     
     if not row:
