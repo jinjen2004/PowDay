@@ -18,9 +18,6 @@ If you get ""⚠️ Could not reach the geocoding service – location filter sk
   Problem: Busiest days arent standardized and stored like that)
   - snowboarders ✅
 
-### frontend to do
-- add confirmation page for booking a trip
-
 #### installing flask (on mac)
 
     in your terminal, check for your python version by inserting command: 'python3 --version'
