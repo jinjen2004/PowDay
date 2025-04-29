@@ -6,7 +6,7 @@ from models import db
 from models.ski_resort import SkiResort
 from datetime import date, datetime
 from utils.distance import geocode_location, haversine
-
+from math import radians, sin, cos, sqrt, atan2
 
 
 from flask import Flask, render_template, request  #Q0: What happens if you remove render_template from this line?
@@ -28,14 +28,37 @@ RESORTS_DF = pd.read_csv('data/resorts/Sample_Ski_Resort_Data.csv')
 BASE = "https://api.openweathermap.org/data"
 API_KEY = "6a8dc08d5123e7c104b59aa3b4c138d1" # <- terrible practice o well
 
+REF_LAT = 34.3381   # Big Bear / Wrightwood area
+REF_LON = -117.2700
+
 @app.route("/")
 def home():
     return render_template('home.html', user="Test Test")
 
 @app.route("/explore")
 def explore():
-    resorts = SkiResort.query.all()
-    return render_template('explore.html', resortList=resorts)
+    # Pull every resort once (cheap: only a few hundred rows)
+    all_resorts = SkiResort.query.all()
+
+    # Compute distance & sort
+    ranked = sorted(
+        all_resorts,
+        key=lambda r: haversine(REF_LAT, REF_LON, r.latitude, r.longitude)
+    )[:10]                                # 10 closest
+
+    # Build payload for the template
+    collection = []
+    for r in ranked:
+        dist = haversine(REF_LAT, REF_LON, r.latitude, r.longitude)
+        # quick-and-dirty placeholder blurb; tweak as you wish
+        desc = (
+            f"{round(dist,1)} mi away • "
+            f"{r.state} • "
+            f"{r.vertical_drop_ft} ft vertical drop"
+        )
+        collection.append([r.resort_name, desc])
+
+    return render_template("explore.html", collection=collection)
     # The images are referenced by the resort name and are in the static/img folder. Works for now but might not be the best system, storing the image path may be better.
 
 @app.route("/search", methods=["GET"])
@@ -153,8 +176,9 @@ def search():
 def resort(resort_name):
     print(f"Resort name: {resort_name}")
     # Query database using SQLAlchemy model
-    resort_name = resort_name.replace("-", " ").replace("_", " ")
-    row = SkiResort.query.filter_by(resort_name=resort_name).first()
+    cleaned_resort_name = resort_name.replace("_", " ")
+
+    row = SkiResort.query.filter_by(resort_name=cleaned_resort_name).first()
     
     if not row:
         abort(404)
