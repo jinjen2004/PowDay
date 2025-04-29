@@ -58,7 +58,7 @@ def explore():
         )
         collection.append([r.resort_name, desc])
 
-    return render_template("explore.html", collection=collection)
+    return render_template("explore.html", resortList=collection)
     # The images are referenced by the resort name and are in the static/img folder. Works for now but might not be the best system, storing the image path may be better.
 
 @app.route("/search", methods=["GET"])
