@@ -268,6 +268,10 @@
   <script>
     // Google Maps API
     let activeInfoWindow = null;
+    const userLat = {{ user_lat if user_lat is not none else 'null' }};
+    const userLng = {{ user_lng if user_lng is not none else 'null' }};
+    const radiusMiles = {{ dist if dist != "Any" else 'null' }};
+    const radiusMeters = (radiusMiles !== null) ? radiusMiles * 1609.34 : null;
     
     function initMap() {
       const resortsList = [
@@ -280,10 +284,38 @@
         {% endfor %}
       ];
 
+      const defaultCenter = { lat: 39.8283, lng: -98.5795 };
+
+      const mapCenter = (userLat !== null && userLng !== null)
+          ? { lat: userLat, lng: userLng }
+          : defaultCenter;
+
       const map = new google.maps.Map(document.getElementById('map'), {
         zoom: 6,
-        center: { lat: 39.8283, lng: -98.5795 } // Center of the US
+        center: mapCenter
       });
+
+      if (userLat !== null && userLng !== null && radiusMeters !== null) {
+        // Draw a circle around the user's search radius
+        const userCircle = new google.maps.Circle({
+          strokeColor: "#4285F4",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#4285F4",
+          fillOpacity: 0.15,
+          map: map,
+          center: { lat: userLat, lng: userLng },
+          radius: radiusMeters
+        });
+
+        // Optional: add a marker at user's location
+        new google.maps.Marker({
+          position: { lat: userLat, lng: userLng },
+          map: map,
+          icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+          title: "Your search center"
+        });
+      }
 
       resortsList.forEach(resort => {
         createMarker(resort, map);

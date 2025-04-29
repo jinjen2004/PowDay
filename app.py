@@ -170,7 +170,16 @@ def search():
     
     resortsWithScores.sort(key=lambda r: r["score"], reverse=True)
 
-    return render_template("search.html", resorts=resortsWithScores, startDate = startDate, endDate = endDate, today=today)
+    return render_template(
+        "search.html", 
+        resorts = resortsWithScores, 
+        startDate = startDate, 
+        endDate = endDate, 
+        today=today, 
+        user_lat=user_lat if loc and dist != "Any" else None,
+        user_lng=user_lng if loc and dist != "Any" else None,
+        dist=dist if dist != "Any" else None
+    )
 
 @app.route("/resort/<resort_name>")
 def resort(resort_name):
